@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://zipek.com
+
+# Sitemaps
+Sitemap: https://zipek.com/sitemap.xml

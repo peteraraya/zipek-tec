@@ -1,0 +1,25 @@
+"use client";
+
+import { MessageCircle } from "lucide-react";
+import { features, siteConfig } from "@/config/site";
+
+export default function WhatsAppButton() {
+  if (!features.enableWhatsApp) return null;
+
+  // Format phone number (remove spaces, plus, etc if needed) for the whatsapp URL
+  const phoneNumber = siteConfig.contact.phone.replace(/[^0-9]/g, "");
+  const message = encodeURIComponent("¡Hola! Quiero agendar un diagnóstico de mi equipo o consultar un servicio de soporte informático.");
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+
+  return (
+    <a
+      href={whatsappUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-24 right-6 z-40 flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-lg shadow-[#25D366]/30 transition-all hover:-translate-y-1"
+      aria-label="Contactar por WhatsApp"
+    >
+      <MessageCircle className="w-7 h-7" />
+    </a>
+  );
+}

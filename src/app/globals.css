@@ -1,26 +1,108 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #060B19;
+  --foreground: #F8FAFC;
+  
+  --primary: #0066FF;
+  --primary-light: #00B2FF;
+  --secondary: #8B5CF6;
+  --accent: #D946EF;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Utilities for gradients */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, var(--primary-light), var(--primary));
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+@keyframes retro-grid {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+.animate-retro-grid {
+  animation: retro-grid 15s linear infinite;
+}
+
+/* Light Mode Hack for hardcoded dark theme */
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #060B19; /* keep original so inversion makes it light */
+}
+
+html.light img, 
+html.light video,
+html.light [data-theme-ignore] {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Accesibilidad */
+html.a11y-grayscale {
+  filter: grayscale(100%);
+}
+
+html.a11y-high-contrast {
+  --background: #000000;
+  filter: contrast(1.5) saturate(1.2);
+}
+
+html.a11y-high-contrast * {
+  outline-color: #fff !important;
+}
+
+html.a11y-text-lg {
+  font-size: 110%;
+}
+
+html.a11y-text-xl {
+  font-size: 120%;
+}
+
+html.a11y-links-underline a {
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+  font-weight: 700 !important;
+}
+
+html.a11y-dyslexia {
+  font-family: "Comic Sans MS", "OpenDyslexic", sans-serif !important;
+}
+
+html.a11y-dyslexia * {
+  font-family: "Comic Sans MS", "OpenDyslexic", sans-serif !important;
 }
