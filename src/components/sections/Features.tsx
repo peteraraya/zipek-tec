@@ -1,70 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
-import {
-  ArrowRight,
-  Check,
-  CircleHelp,
-  FileCheck2,
-  Laptop,
-  MapPin,
-  MessageCircle,
-  Monitor,
-  Search,
-  ShieldCheck,
-  Wrench,
-} from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
-
-const steps = [
-  {
-    icon: MessageCircle,
-    title: "Nos cuentas",
-    description: "Equipo, síntoma y desde cuándo ocurre.",
-    outcome: "Orientación inicial",
-  },
-  {
-    icon: Search,
-    title: "Evaluamos",
-    description: "Definimos modalidad y revisión necesaria.",
-    outcome: "Costo de revisión informado antes",
-  },
-  {
-    icon: FileCheck2,
-    title: "Cotizamos",
-    description: "Recibes tareas, límites y costos aplicables.",
-    outcome: "Propuesta para aprobar",
-  },
-  {
-    icon: Wrench,
-    title: "Autorizas",
-    description: "Empezamos solo con tu aprobación.",
-    outcome: "Sin extras sin consultarte",
-  },
-  {
-    icon: Laptop,
-    title: "Probamos y entregamos",
-    description: "Revisamos el resultado y te explicamos lo realizado.",
-    outcome: "Resumen y condiciones acordadas",
-  },
-];
-
-const servicePaths = [
-  {
-    icon: Monitor,
-    title: "Atención remota",
-    description: "Cuando el problema y el acceso permiten resolverlo a distancia. Acordamos antes cómo conectarnos.",
-  },
-  {
-    icon: MapPin,
-    title: "Atención presencial",
-    description: "En Quillota o por coordinar según ubicación y agenda. Visita, traslado y costos se confirman antes.",
-  },
-  {
-    icon: CircleHelp,
-    title: "¿Hace falta revisar?",
-    description: "Si no es posible cotizar sin diagnóstico, explicamos qué se necesita y su costo antes de coordinar.",
-  },
-];
+import ProcessFlow from "@/components/sections/ProcessFlow";
 
 const checklist = [
   "Qué ocurre y cuándo comenzó.",
@@ -115,53 +52,10 @@ export default function Features() {
           </div>
         </div>
 
-        <div className="mt-14 border-t border-white/10 pt-10 sm:mt-16 sm:pt-12">
-          <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Así trabajamos</p>
-              <h3 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">Cinco pasos, con tu aprobación.</h3>
-            </div>
-            <Link href="/consultas" className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-light hover:text-white">
-              Cuéntanos tu caso <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
+        <ProcessFlow location={siteConfig.contact.location} />
 
-          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {steps.map(({ icon: Icon, title, description, outcome }, index) => (
-              <li key={title} className="relative border border-white/[0.09] bg-white/[0.02] p-4 sm:p-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold tabular-nums tracking-widest text-primary-light">0{index + 1}</span>
-                  <Icon className="h-4 w-4 text-primary-light" aria-hidden="true" />
-                </div>
-                <h4 className="mt-4 font-semibold text-white">{title}</h4>
-                <p className="mt-1 text-sm leading-5 text-gray-400">{description}</p>
-                <p className="mt-4 border-t border-white/[0.08] pt-3 text-xs leading-5 text-gray-300">
-                  <span className="font-semibold text-primary-light">Resultado: </span>{outcome}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <div className="mt-12 grid gap-8 border-t border-white/10 pt-10 lg:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Modalidad y evaluación</p>
-            <h3 className="mt-2 text-2xl font-semibold text-white">La ruta depende de tu caso.</h3>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {servicePaths.map(({ icon: Icon, title, description }) => (
-                <article key={title} className="border-l-2 border-primary-light/50 bg-white/[0.025] p-4">
-                  <Icon className="h-5 w-5 text-primary-light" aria-hidden="true" />
-                  <h4 className="mt-3 text-sm font-semibold text-white">{title}</h4>
-                  <p className="mt-2 text-xs leading-5 text-gray-400">{description}</p>
-                </article>
-              ))}
-            </div>
-            <p className="mt-4 text-xs leading-5 text-gray-500">
-              Atendemos en {siteConfig.contact.location}; fuera de esa zona confirmamos disponibilidad. No publicamos plazos fijos: agenda y tiempos se acuerdan para cada solicitud.
-            </p>
-          </div>
-
-          <aside className="border border-white/[0.09] bg-white/[0.02] p-5 sm:p-6">
+        <div className="mt-10 border-t border-white/10 pt-8">
+          <aside className="max-w-3xl border border-white/[0.09] bg-white/[0.02] p-5 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-light">Para agilizar la consulta</p>
