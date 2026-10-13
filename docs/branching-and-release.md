@@ -112,6 +112,19 @@ Las variables `NEXT_PUBLIC_*` son públicas en el bundle del navegador. Nunca
 uses una clave `service_role` en ellas ni en argumentos Docker. No incluyas
 credenciales en el YAML, `.env.example`, logs o artefactos.
 
+El workflow comprueba que existan `VERCEL_TOKEN`, `VERCEL_ORG_ID` y
+`VERCEL_PROJECT_ID` antes de invocar Vercel CLI. Si aparece el mensaje
+`VERCEL_TOKEN is missing`, revisa que el secreto esté creado dentro del
+environment exacto que solicita el job (`staging` o `production`), que el job
+use ese environment y que el secreto esté escrito respetando mayúsculas. La
+clave debe ser un token de Vercel válido, no el project ID ni un token de
+Supabase.
+
+El proyecto deja la compilación nativa de Next.js para Vercel. `output:
+"standalone"` se habilita únicamente al construir la imagen Docker con
+`NEXT_OUTPUT_STANDALONE=1`; no actives esa variable en los environments de
+Vercel.
+
 ### Protección de ramas
 
 En **Settings → Rules → Rulesets** (o Branch protection rules), configura:

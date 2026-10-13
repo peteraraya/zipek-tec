@@ -192,6 +192,10 @@ guardes en el repositorio. Habilita revisores requeridos para `production` y
 desactiva despliegues automáticos duplicados desde la integración Git de
 Vercel si Actions será el único responsable de publicar.
 
+El build nativo de Vercel usa la salida normal de Next.js. La opción standalone
+solo se activa en la etapa Docker mediante `NEXT_OUTPUT_STANDALONE=1`; esto
+evita mezclar el empaquetado del contenedor con el adaptador nativo de Vercel.
+
 Las imágenes Docker se construyen como validación y para ejecución externa;
 la publicación del sitio sigue usando el build nativo de Vercel. `npm run build`
 ejecuta `postbuild`, que genera el sitemap y `robots.txt`.
