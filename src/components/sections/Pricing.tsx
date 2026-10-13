@@ -19,16 +19,15 @@ export default function Pricing() {
     <section id="planes" className="border-b border-white/[0.07] bg-background py-20 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-2xl sm:mb-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Planes de servicio</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Atención y soporte</p>
           <h2 className="mt-3 text-3xl text-white md:text-4xl">
-            Atención puntual o soporte continuo.
+            Una propuesta clara antes de empezar.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-gray-400 sm:text-lg">
-            Opciones para una atención puntual o soporte periódico. Te confirmamos el alcance y el precio antes de empezar.
+            Cuéntanos qué necesitas. Definimos contigo el alcance, el precio y las condiciones aplicables antes de autorizar cualquier trabajo.
           </p>
           <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
-            Los valores dependen del equipo, el trabajo necesario y, cuando corresponda, repuestos o desplazamiento.
-            Consulta si la revisión tiene costo y qué incluye cada servicio antes de coordinar.
+            La cotización puede depender de los equipos, tareas, modalidad, ubicación, repuestos y licencias. Te informamos si la revisión tiene costo antes de coordinar.
           </p>
 
           <div className="mt-7 inline-flex items-center gap-1 border-b border-white/15">
@@ -97,20 +96,20 @@ export default function Pricing() {
         </div>
 
         <div className="mx-auto mt-12 max-w-5xl border-t border-white/15 pt-8 sm:mt-16">
-          <h3 className="text-xl font-semibold text-white">Qué confirmamos antes de empezar</h3>
+          <h3 className="text-xl font-semibold text-white">Lo dejamos claro antes de empezar</h3>
           <ol className="mt-5 grid gap-5 sm:grid-cols-3">
             {[
               {
-                title: "Revisión y disponibilidad",
-                description: "Aclaramos el problema, la modalidad de atención y si corresponde un costo de revisión o visita.",
+                title: "Caso y modalidad",
+                description: "Aclaramos qué revisión se requiere, si tiene costo, y si podemos atender según zona y agenda.",
               },
               {
                 title: "Alcance y costos",
-                description: "Te explicamos el trabajo propuesto y los costos que correspondan, incluidos repuestos o licencias.",
+                description: "Detallamos tareas incluidas, exclusiones y costos aplicables, como repuestos, licencias o traslado.",
               },
               {
-                title: "Tu autorización",
-                description: "Solo comenzamos con tu aprobación. Si surge un trabajo adicional, te consultamos antes.",
+                title: "Condiciones y autorización",
+                description: "Acordamos canales y garantía aplicable. Solo empezamos con tu aprobación; los extras requieren nueva autorización.",
               },
             ].map((step, index) => (
               <li key={step.title} className="flex gap-3">
@@ -125,8 +124,7 @@ export default function Pricing() {
             ))}
           </ol>
           <p className="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-gray-500">
-            Las tarjetas describen servicios que podemos cotizar; no representan una tarifa fija ni confirman disponibilidad.
-            El alcance, exclusiones, garantía y condiciones aplicables se acuerdan para cada caso.
+            Las tarjetas son ejemplos de tareas que pueden evaluarse, no paquetes con inclusiones automáticas. En soporte periódico se definen por propuesta los equipos, canales, horarios, visitas, tareas, exclusiones y agenda. No ofrecemos un tiempo de respuesta estándar ni garantía universal: las condiciones aplicables se informan para cada caso antes de autorizar.
           </p>
         </div>
       </div>

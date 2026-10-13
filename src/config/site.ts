@@ -184,8 +184,16 @@ export const faqData = [
     answer: "Puede depender del problema, la modalidad de atención y la ubicación. Consúltanos antes de coordinar; te informaremos si hay un costo de revisión o visita antes de que aceptes el servicio."
   },
   {
+    question: "¿Cómo se calcula el precio?",
+    answer: "Cotizamos según el equipo, las tareas necesarias y la modalidad. Si aplican repuestos, licencias o desplazamiento, te los informamos por separado. Antes de coordinar también confirmamos si la revisión tiene costo."
+  },
+  {
     question: "¿Me dicen el precio antes de reparar el equipo?",
     answer: "Sí. Primero revisamos el problema y te explicamos el trabajo recomendado y su precio. No hacemos trabajos adicionales sin consultarte y recibir tu autorización."
+  },
+  {
+    question: "¿La atención es remota o presencial?",
+    answer: "Depende del problema y de si puede resolverse de forma segura a distancia. La atención presencial se coordina según ubicación y disponibilidad; cualquier costo de visita o traslado se informa antes."
   },
   {
     question: "¿Qué pasa con mis archivos?",
@@ -197,7 +205,11 @@ export const faqData = [
   },
   {
     question: "¿Atienden negocios con soporte mensual?",
-    answer: "Sí. Podemos cotizar una mensualidad para tu pyme. Antes de contratar, dejamos por escrito qué incluye, las exclusiones, las visitas y el tiempo de respuesta acordado."
+    answer: "Podemos cotizar soporte periódico según tus equipos y necesidades. La propuesta define tareas, canales, horarios, visitas, exclusiones y condiciones; no hay un tiempo de respuesta estándar publicado."
+  },
+  {
+    question: "¿Qué garantía tiene el trabajo?",
+    answer: "Depende del trabajo acordado. Si corresponde una garantía, antes de autorizar te indicamos por escrito su alcance, duración y exclusiones. No hay una garantía universal para todos los servicios."
   },
   {
     question: "¿Hacen visitas fuera de Quillota o atención urgente?",
@@ -212,84 +224,81 @@ export const techStackData = [
 export const methodologyData = [
   {
     step: "01",
-    title: "Levantamiento de Requerimientos",
-    description: "Completas nuestra ficha técnica para entender tu negocio, plazos y expectativas antes de cotizar."
+    title: "Entendemos el caso",
+    description: "Conversamos sobre los equipos, el problema, la ubicación y lo que necesitas resolver."
   },
   {
     step: "02",
-    title: "Propuesta y NDA",
-    description: "Te enviamos una propuesta formal y firmamos un Acuerdo de Confidencialidad para proteger tus ideas."
+    title: "Evaluamos y cotizamos",
+    description: "Definimos modalidad, revisión necesaria, costos y alcance antes de comenzar."
   },
   {
     step: "03",
-    title: "Desarrollo por Hitos",
-    description: "Ejecutamos el proyecto en etapas aprobables (Hitos 1, 2 y 3) para asegurar visibilidad y control."
+    title: "Esperamos tu autorización",
+    description: "Solo realizamos las tareas que apruebes; cualquier cambio se conversa antes."
   },
   {
     step: "04",
-    title: "Acta de Recepción",
-    description: "Realizamos la entrega oficial con un Acta de Recepción Conforme, marcando el inicio de la garantía."
+    title: "Probamos y entregamos",
+    description: "Te explicamos el trabajo realizado y las condiciones acordadas para el servicio."
   },
   {
     step: "05",
-    title: "Soporte y Mantención",
-    description: "Ofrecemos planes mensuales con SLA (Niveles de Servicio) para que tu sistema nunca se detenga."
+    title: "Conversamos el seguimiento",
+    description: "Si necesitas continuidad, cotizamos un alcance periódico según equipos y disponibilidad."
   }
 ];
 
 export const pricingData = [
   {
-    title: "Hogar Seguro",
-    price: "Cotización previa",
-    description: "Atención puntual con tareas y precio definidos tras conocer el estado del equipo.",
+    title: "Atención puntual para el hogar",
+    price: "A cotizar",
+    description: "Revisamos tu solicitud y te proponemos un alcance según el equipo y el problema.",
     features: [
-      "Diagnóstico inicial sin rodeos",
-      "Limpieza y optimización del equipo",
-      "Antivirus y seguridad básica",
-      "Respaldo de archivos según acceso y estado del equipo",
-      "1 sesión de capacitación personalizada",
+      "Evaluación del problema y modalidad",
+      "Puesta a punto o reinstalación, si corresponde",
+      "Revisión de respaldo y archivos importantes",
+      "Licencias, repuestos o tareas adicionales identificados por separado",
     ],
-    cta: "Consultar por este plan",
+    cta: "Cotizar mi solicitud",
   },
   {
-    title: "Puesta a Punto Legal",
-    price: "Cotización previa",
-    description: "Reinstalación según compatibilidad, licencias, respaldo y alcance acordado.",
+    title: "Configuración o reinstalación",
+    price: "A cotizar",
+    description: "Alternativa a evaluar según compatibilidad, accesos, respaldo y licencias.",
     features: [
-      "Formateo y reinstalación segura",
-      "Windows con licencia o Linux",
-      "Drivers, actualizaciones y software libre",
-      "Configuración de correo e impresora",
-      "Informe final y garantía del servicio",
+      "Sistema operativo y compatibilidad del equipo",
+      "Drivers, actualizaciones y aplicaciones acordadas",
+      "Configuración de correo o periféricos, si se especifica",
+      "Respaldo, licencias y recuperación se evalúan por separado",
     ],
-    cta: "Consultar por este plan",
+    cta: "Consultar esta alternativa",
   },
 ];
 
 export const supportPricingData = [
   {
-    title: "Pyme Tranquila",
-    price: "Según alcance",
-    description: "Mensualidad según equipos, cobertura y tareas acordadas antes de contratar.",
+    title: "Soporte periódico para pyme",
+    price: "A cotizar",
+    description: "Propuesta a medida del inventario, prioridades y modalidad que necesite el negocio.",
     features: [
-      "Soporte remoto mensual",
-      "1 a 2 visitas programadas",
-      "Respaldos y revisión de discos",
-      "Revisión de licencias y software",
-      "Capacitación de usuarios y políticas",
+      "Equipos, tareas y canales por definir en la propuesta",
+      "Modalidad remota o visitas, sujetas a ubicación y agenda",
+      "Mantenimiento, respaldos o licencias solo si se especifican",
+      "Horarios, exclusiones y condiciones acordados antes de contratar",
     ],
-    cta: "Cotizar mensualidad",
+    cta: "Diseñar una propuesta",
   },
   {
-    title: "Atención urgente",
-    price: "Recargo informado",
-    description: "Confirmamos disponibilidad y costo antes de aceptar la visita.",
+    title: "Consulta prioritaria",
+    price: "A cotizar",
+    description: "Consulta si es posible priorizar tu solicitud; confirmamos disponibilidad y costos antes de aceptar.",
     features: [
-      "Prioridad de atención",
-      "Visita según disponibilidad",
-      "Cobertura adicional por urgencia",
-      "Se agrega sobre la tarifa normal",
+      "Disponibilidad revisada al recibir la solicitud",
+      "Modalidad y zona confirmadas caso a caso",
+      "Cualquier costo adicional informado antes de coordinar",
+      "No representa un tiempo de respuesta garantizado",
     ],
-    cta: "Solicitar prioridad",
+    cta: "Consultar disponibilidad",
   },
 ];

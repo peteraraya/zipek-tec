@@ -43,7 +43,7 @@ export default function Hero() {
             {[
               "Precio acordado antes del trabajo",
               "Respaldo conversado contigo",
-              "Informe y garantía por escrito",
+              "Alcance y condiciones por escrito",
             ].map((item) => (
               <div key={item} className="inline-flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-primary-light" aria-hidden="true" />
