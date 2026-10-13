@@ -17,12 +17,12 @@ export default function Hero() {
             Soporte técnico · Quillota y remoto
           </p>
 
-          <h1 className="text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[4.25rem]">
+          <h1 className="text-[2.5rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[4.25rem]">
             Soporte informático,{" "}
             <span className="text-primary-light">claro y cercano.</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg sm:leading-8">
+          <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg sm:leading-[1.55]">
             Ayudamos a familias y negocios a resolver sus problemas informáticos.
             Revisamos, explicamos las opciones y acordamos el precio antes de empezar.
           </p>

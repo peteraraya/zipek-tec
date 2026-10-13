@@ -23,7 +23,7 @@ export default function Navbar() {
                 height={40} 
                 className="rounded-full"
               />
-              <span className="hidden text-2xl font-semibold tracking-[-0.06em] sm:block">
+              <span className="hidden text-2xl font-semibold tracking-[-0.035em] sm:block">
                 <span className="text-white">zipek</span>
               </span>
             </Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
                 {features.enableClientPortal && (
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 opacity-60 cursor-not-allowed bg-white/5" title="Disponible próximamente">
                     Portal
-                    <span className="bg-primary/20 text-primary-light text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Pronto</span>
+                    <span className="bg-primary/20 text-primary-light text-xs px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Pronto</span>
                   </div>
                 )}
                 <Button asChild className="rounded-lg px-5 font-medium shadow-none">
@@ -89,7 +89,7 @@ export default function Navbar() {
             {features.enableClientPortal && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-gray-500 border border-white/5 my-2 cursor-not-allowed">
                 Portal Clientes
-                <span className="bg-primary/20 text-primary-light text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Pronto</span>
+                <span className="bg-primary/20 text-primary-light text-xs px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Pronto</span>
               </div>
             )}
             <Link

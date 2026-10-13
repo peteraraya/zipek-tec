@@ -16,7 +16,7 @@ export default function Footer() {
               height={48}
               className="rounded-full"
             />
-            <span className="text-3xl font-semibold tracking-[-0.06em]">
+            <span className="text-3xl font-semibold tracking-[-0.035em]">
               <span className="text-white">zipek</span>
             </span>
           </Link>

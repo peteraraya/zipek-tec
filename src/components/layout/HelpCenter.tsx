@@ -577,7 +577,7 @@ export default function HelpCenter() {
                       <Send className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
-                  <p className="mt-2 text-center text-[11px] text-gray-500">
+                  <p className="mt-2 text-center text-xs text-gray-500">
                     Respuestas automáticas basadas en la información del sitio.
                   </p>
                 </form>

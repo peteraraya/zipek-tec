@@ -13,6 +13,7 @@
   --surface-raised: #111b2d;
   --border-subtle: rgba(167, 190, 207, 0.14);
   --text-muted: #aab7c4;
+  --text-subtle: #aab7c4;
 }
 
 @theme inline {
@@ -23,15 +24,46 @@
   --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
+  --font-heading: var(--font-manrope), var(--font-inter), Arial, Helvetica, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+html.light {
+  color-scheme: light;
+  --background: #f5f7f8;
+  --foreground: #17212b;
+  --primary: #086a78;
+  --primary-hover: #075865;
+  --primary-light: #075e6b;
+  --secondary: #6552a3;
+  --accent: #7b3ca3;
+  --surface: #ffffff;
+  --surface-raised: #edf2f4;
+  --border-subtle: rgba(23, 33, 43, 0.14);
+  --text-muted: #465563;
+  --text-subtle: #52616e;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
   overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-manrope), var(--font-inter), Arial, Helvetica, sans-serif;
+  font-optical-sizing: auto;
 }
 
 .text-gradient {
@@ -48,7 +80,11 @@ body {
 .public-site {
   background: var(--background);
   color: var(--foreground);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+}
+
+.public-site .text-gray-500 {
+  color: var(--text-subtle);
 }
 
 .public-site .text-gradient {
@@ -67,14 +103,33 @@ body {
 
 .public-site main h1,
 .public-site main h2,
-.public-site main h3 {
-  letter-spacing: -0.035em;
+.public-site main h3,
+.public-site main h4 {
   text-wrap: balance;
 }
 
-.public-site main h1,
+.public-site main h1 {
+  letter-spacing: -0.035em;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
 .public-site main h2 {
+  letter-spacing: -0.025em;
+  font-weight: 650;
+  line-height: 1.18;
+}
+
+.public-site main h3 {
+  letter-spacing: -0.012em;
   font-weight: 600;
+  line-height: 1.25;
+}
+
+.public-site main h4 {
+  letter-spacing: 0;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .public-site main p {
@@ -131,16 +186,66 @@ body {
   animation: retro-grid 15s linear infinite;
 }
 
-/* Keep support for the existing display accessibility controls. */
-html.light {
-  filter: invert(1) hue-rotate(180deg);
-  background-color: #080d19;
+html.light body {
+  background: var(--background);
+  color: var(--foreground);
 }
 
-html.light img, 
-html.light video,
-html.light [data-theme-ignore] {
-  filter: invert(1) hue-rotate(180deg);
+html.light .text-white {
+  color: var(--foreground);
+}
+
+html.light .text-gray-200,
+html.light .text-gray-300 {
+  color: #34424e;
+}
+
+html.light .text-gray-400,
+html.light .text-gray-500 {
+  color: var(--text-muted);
+}
+
+html.light [class*="border-white/"] {
+  border-color: var(--border-subtle);
+}
+
+html.light [class*="bg-white/"] {
+  background-color: var(--surface-raised);
+}
+
+html.light [class*="bg-black/"] {
+  background-color: #e9eef1;
+}
+
+html.light .bg-primary.text-white,
+html.light .bg-primary-hover.text-white,
+html.light a[href^="https://wa.me/"].text-white {
+  color: #fff;
+}
+
+html.light .public-site #como-trabajamos,
+html.light .public-site #contacto {
+  background-color: #edf2f4;
+}
+
+html.light .public-site #como-trabajamos .absolute {
+  border-color: var(--border-subtle);
+  background-color: #ffffff;
+}
+
+html.light .public-site #como-trabajamos .absolute p {
+  color: var(--foreground);
+}
+
+html.light .public-site [role="dialog"] .text-white,
+html.light .public-site [role="complementary"] .text-white,
+html.light .public-site [role="dialog"] .text-gray-200,
+html.light .public-site [role="dialog"] .text-gray-300,
+html.light .public-site [role="dialog"] .text-gray-400,
+html.light .public-site [role="complementary"] .text-gray-200,
+html.light .public-site [role="complementary"] .text-gray-300,
+html.light .public-site [role="complementary"] .text-gray-400 {
+  color: #f1f4f7;
 }
 
 /* Accesibilidad */
