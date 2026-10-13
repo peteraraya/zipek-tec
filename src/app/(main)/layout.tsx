@@ -11,7 +11,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="public-site min-h-screen">
       <Navbar />
       {children}
       <Footer />
@@ -19,6 +19,6 @@ export default function MainLayout({
       <AccessibilityWidget />
       <CookieConsent />
       <ConsentAwareAnalytics />
-    </>
+    </div>
   );
 }

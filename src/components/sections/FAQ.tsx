@@ -11,35 +11,34 @@ export default function FAQ() {
   if (!features.enableFAQ) return null;
 
   return (
-    <section id="faq" className="py-20 relative bg-background/50">
+    <section id="faq" className="border-b border-white/[0.07] bg-background py-20 sm:py-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Preguntas <span className="text-gradient">Frecuentes</span>
-          </h2>
-          <p className="text-gray-400 text-lg">
+        <div className="mb-10 sm:mb-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Información</p>
+          <h2 className="mt-3 text-3xl text-white md:text-4xl">Preguntas frecuentes.</h2>
+          <p className="mt-4 text-base leading-7 text-gray-400 sm:text-lg">
             Resolvemos tus dudas sobre cómo trabajamos y qué puedes esperar.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="divide-y divide-white/10 border-y border-white/10">
           {faqData.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
-              <div 
+              <div
                 key={index} 
-                className="border border-white/10 bg-white/5 rounded-2xl overflow-hidden"
+                className="overflow-hidden"
               >
                 <button
                   type="button"
                   id={`faq-trigger-${index}`}
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${index}`}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none"
+                  className="flex min-h-16 w-full items-center justify-between gap-6 py-5 text-left focus:outline-none"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
-                  <span className="font-semibold text-white">{faq.question}</span>
+                  <span className="font-medium text-white sm:text-lg">{faq.question}</span>
                   <ChevronDown
                     aria-hidden="true"
                     className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} 
@@ -56,7 +55,7 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-4 text-gray-400">
+                      <div className="max-w-2xl pb-6 pr-10 leading-7 text-gray-400">
                         {faq.answer}
                       </div>
                     </motion.div>

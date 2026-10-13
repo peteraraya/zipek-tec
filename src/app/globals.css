@@ -2,19 +2,20 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #060B19;
-  --foreground: #F8FAFC;
-  
-  --primary: #0066FF;
-  --primary-light: #00B2FF;
-  --secondary: #8B5CF6;
-  --accent: #D946EF;
+  --background: #060b19;
+  --foreground: #f8fafc;
+  --primary: #0066ff;
+  --primary-hover: #0054d4;
+  --primary-light: #00b2ff;
+  --secondary: #8b5cf6;
+  --accent: #d946ef;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
@@ -29,7 +30,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Utilities for gradients */
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
@@ -39,6 +39,70 @@ body {
 
 .bg-gradient-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.public-site {
+  --background: #080d19;
+  --foreground: #f1f4f7;
+  --primary: #087a8a;
+  --primary-hover: #056572;
+  --primary-light: #67cbd3;
+  --secondary: #6552a3;
+  --accent: #a65cd2;
+  --surface: #0d1524;
+  --surface-raised: #111b2d;
+  --border-subtle: rgba(167, 190, 207, 0.14);
+  --text-muted: #aab7c4;
+  background: var(--background);
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.public-site .text-gradient {
+  background: none;
+  color: var(--primary-light);
+  -webkit-text-fill-color: currentColor;
+}
+
+.public-site .bg-gradient-primary {
+  background: var(--primary);
+}
+
+.public-site main {
+  isolation: isolate;
+}
+
+.public-site main h1,
+.public-site main h2,
+.public-site main h3 {
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.public-site main h1,
+.public-site main h2 {
+  font-weight: 600;
+}
+
+.public-site main p {
+  text-wrap: pretty;
+}
+
+.public-site a,
+.public-site button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.public-site :focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-retro-grid {
+    animation: none;
+  }
 }
 
 @keyframes marquee {
@@ -59,10 +123,10 @@ body {
   animation: retro-grid 15s linear infinite;
 }
 
-/* Light Mode Hack for hardcoded dark theme */
+/* Keep support for the existing display accessibility controls. */
 html.light {
   filter: invert(1) hue-rotate(180deg);
-  background-color: #060B19; /* keep original so inversion makes it light */
+  background-color: #080d19;
 }
 
 html.light img, 

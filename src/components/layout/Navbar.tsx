@@ -4,26 +4,25 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navLinks, features } from "@/config/site";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav aria-label="Navegación principal" className="fixed top-0 z-50 w-full border-b border-white/10 bg-background/90 backdrop-blur-md">
+    <nav aria-label="Navegación principal" className="fixed top-0 z-50 w-full border-b border-white/[0.08] bg-background/95 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2">
-              <Image 
+              <Image
                 src="/logo/logo_zipek-tecnologia.png" 
                 alt="Zipek Tecnología Logo" 
                 width={40} 
                 height={40} 
                 className="rounded-full"
               />
-              <span className="text-2xl font-bold tracking-tighter hidden sm:block">
+              <span className="hidden text-2xl font-semibold tracking-[-0.06em] sm:block">
                 <span className="text-white">zipek</span>
               </span>
             </Link>
@@ -36,7 +35,7 @@ export default function Navbar() {
                   <Link
                     key={link.title}
                     href={link.href}
-                    className="hover:text-primary-light hover:bg-white/5 transition-colors px-3 py-2 rounded-full text-sm font-medium text-gray-300"
+                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-primary-light"
                   >
                     {link.title}
                   </Link>
@@ -50,8 +49,7 @@ export default function Navbar() {
                     <span className="bg-primary/20 text-primary-light text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">Pronto</span>
                   </div>
                 )}
-                <ThemeToggle />
-                <Button asChild className="rounded-full px-5 font-medium shadow-lg shadow-primary/20">
+                <Button asChild className="rounded-lg px-5 font-medium shadow-none">
                   <Link href="/consultas">Enviar consulta</Link>
                 </Button>
               </div>
@@ -59,10 +57,9 @@ export default function Navbar() {
           </div>
           
           <div className="flex items-center gap-3 xl:hidden">
-            <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="rounded-lg p-2 text-gray-300 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="rounded-lg p-2 text-gray-300 transition hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"

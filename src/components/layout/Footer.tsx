@@ -5,9 +5,9 @@ import CookiePreferencesButton from "@/components/layout/CookiePreferencesButton
 
 export default function Footer() {
   return (
-    <footer className="bg-background border-t border-white/5 pt-16 pb-8">
+    <footer className="border-t border-white/[0.08] bg-background pt-14 pb-8 sm:pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+        <div className="mb-10 flex flex-col items-center justify-between gap-6 md:flex-row">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo/logo_zipek-tecnologia.png"
@@ -16,12 +16,12 @@ export default function Footer() {
               height={48}
               className="rounded-full"
             />
-            <span className="text-3xl font-bold tracking-tighter">
+            <span className="text-3xl font-semibold tracking-[-0.06em]">
               <span className="text-white">zipek</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-6 text-sm text-gray-400">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-gray-400 md:justify-end">
             <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               WhatsApp
             </a>
@@ -32,14 +32,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="w-full h-px bg-white/10 mb-8" />
+        <div className="mb-8 h-px w-full bg-white/10" />
 
         <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
           <div className="text-sm text-gray-500 order-2 lg:order-1 text-center lg:text-left">
             &copy; {new Date().getFullYear()} {siteConfig.name}. Todos los derechos reservados.
           </div>
 
-          <div className="flex gap-4 md:gap-6 text-sm flex-wrap justify-center items-center order-1 lg:order-2">
+          <div className="order-1 flex flex-wrap items-center justify-center gap-4 text-sm md:gap-6 lg:order-2">
             <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
               Privacidad
             </Link>
@@ -50,7 +50,7 @@ export default function Footer() {
               Seguridad
             </Link>
             <CookiePreferencesButton />
-            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}?text=Hola%2C%20necesito%20ayuda%20con%20un%20equipo.`} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-gray-400 transition-colors hover:text-white">
+            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}?text=Hola%2C%20necesito%20ayuda%20con%20un%20equipo.`} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-1.5 text-gray-400 transition-colors hover:border-primary-light/40 hover:text-white">
               WhatsApp
             </a>
           </div>

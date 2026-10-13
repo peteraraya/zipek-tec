@@ -16,28 +16,29 @@ export default function Pricing() {
   const currentData = isSupport ? supportPricingData : pricingData;
 
   return (
-    <section id="planes" className="py-20 relative bg-background/50 border-t border-white/5">
+    <section id="planes" className="border-b border-white/[0.07] bg-background py-20 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Planes para <span className="text-gradient">tu tranquilidad</span>
+        <div className="mb-10 max-w-2xl sm:mb-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Planes de servicio</p>
+          <h2 className="mt-3 text-3xl text-white md:text-4xl">
+            Atención puntual o soporte continuo.
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+          <p className="mt-4 max-w-xl text-base leading-7 text-gray-400 sm:text-lg">
             Opciones para una atención puntual o soporte periódico. Te confirmamos el alcance y el precio antes de empezar.
           </p>
-          <p className="mx-auto -mt-3 mb-8 max-w-2xl text-sm leading-relaxed text-gray-500">
+          <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
             Los valores dependen del equipo, el trabajo necesario y, cuando corresponda, repuestos o desplazamiento.
             Consulta si la revisión tiene costo y qué incluye cada servicio antes de coordinar.
           </p>
 
-          <div className="inline-flex items-center p-1 bg-white/5 border border-white/10 rounded-full">
+          <div className="mt-7 inline-flex items-center gap-1 border-b border-white/15">
             <button
               type="button"
               aria-pressed={!isSupport}
               onClick={() => setIsSupport(false)}
               className={cn(
-                "px-6 py-2 rounded-full text-sm font-medium transition-all",
-                !isSupport ? "bg-primary text-white shadow-lg" : "text-gray-400 hover:text-white"
+                "min-h-11 border-b-2 px-4 text-sm font-medium transition-colors",
+                !isSupport ? "border-primary-light text-white" : "border-transparent text-gray-400 hover:text-white"
               )}
             >
               Hogar / Personas
@@ -47,8 +48,8 @@ export default function Pricing() {
               aria-pressed={isSupport}
               onClick={() => setIsSupport(true)}
               className={cn(
-                "px-6 py-2 rounded-full text-sm font-medium transition-all",
-                isSupport ? "bg-primary text-white shadow-lg" : "text-gray-400 hover:text-white"
+                "min-h-11 border-b-2 px-4 text-sm font-medium transition-colors",
+                isSupport ? "border-primary-light text-white" : "border-transparent text-gray-400 hover:text-white"
               )}
             >
               Pyme / Empresas
@@ -60,12 +61,12 @@ export default function Pricing() {
           {currentData.map((plan, idx) => (
             <Card
               key={idx}
-              className="relative flex flex-col border-white/10 bg-white/5 transition-colors hover:border-primary/40"
+              className="relative flex flex-col rounded-none border-white/[0.1] bg-white/[0.018] shadow-none transition-colors hover:border-primary-light/40"
             >
-              <CardHeader className="text-center pb-8 pt-8">
-                <CardTitle className="text-xl text-gray-300 mb-2">{plan.title}</CardTitle>
-                <div className="min-h-16 flex items-center justify-center text-2xl font-bold text-white sm:text-3xl">{plan.price}</div>
-                <CardDescription className="min-h-10 text-sm text-gray-400">
+              <CardHeader className="pb-7 pt-7">
+                <CardTitle className="mb-2 text-xl text-gray-200">{plan.title}</CardTitle>
+                <div className="flex min-h-12 items-center text-xl font-semibold text-white sm:text-2xl">{plan.price}</div>
+                <CardDescription className="min-h-10 text-sm leading-6 text-gray-400">
                   {plan.description}
                 </CardDescription>
               </CardHeader>
@@ -74,8 +75,8 @@ export default function Pricing() {
                 <ul className="space-y-4">
                   {plan.features.map((feat, fIdx) => (
                     <li key={fIdx} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary shrink-0" />
-                      <span className="text-gray-300 text-sm leading-tight">{feat}</span>
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-light" />
+                      <span className="text-sm leading-6 text-gray-300">{feat}</span>
                     </li>
                   ))}
                 </ul>
@@ -95,7 +96,7 @@ export default function Pricing() {
           ))}
         </div>
 
-        <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+        <div className="mx-auto mt-12 max-w-5xl border-t border-white/15 pt-8 sm:mt-16">
           <h3 className="text-xl font-semibold text-white">Qué confirmamos antes de empezar</h3>
           <ol className="mt-5 grid gap-5 sm:grid-cols-3">
             {[
