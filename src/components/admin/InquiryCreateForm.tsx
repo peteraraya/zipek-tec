@@ -26,7 +26,7 @@ export default function InquiryCreateForm() {
   return (
     <form action={action} className="space-y-5">
       {state.error && <p role="alert" className="rounded-lg border border-red-400/20 bg-red-400/10 p-3 text-sm text-red-200">{state.error}</p>}
-      <p className="rounded-lg border border-sky-400/20 bg-sky-400/5 p-4 text-sm leading-relaxed text-sky-100">
+      <p className="rounded-lg border border-primary-light/20 bg-primary/5 p-4 text-sm leading-relaxed text-primary-light">
         Registra manualmente las consultas recibidas por WhatsApp. Este formulario no importa mensajes automáticamente desde WhatsApp.
       </p>
       <AdminField label="Tema">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function PortalLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -8,9 +9,12 @@ export default function PortalLayout({ children }: Readonly<{ children: React.Re
           <Link href="/" className="font-bold tracking-wide text-white">
             ZIPEK <span className="text-primary-light">TECNOLOGÍA</span>
           </Link>
-          <Link href="/#inicio" className="text-sm text-gray-400 hover:text-white">
-            Volver al sitio
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/#inicio" className="text-sm text-gray-400 hover:text-white">
+              Volver al sitio
+            </Link>
+          </div>
         </div>
       </header>
       {children}

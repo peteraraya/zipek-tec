@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signOutAdmin } from "@/app/actions/admin-auth";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function AdminHeader({ name }: { name: string }) {
   return (
@@ -12,6 +13,7 @@ export default function AdminHeader({ name }: { name: string }) {
           <p className="mt-1 text-sm text-gray-400">Sesión: {name}</p>
         </div>
         <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <ThemeToggle />
           <Link className="rounded-lg px-3 py-2 text-gray-300 hover:bg-white/5 hover:text-white" href="/admin/clientes">
             Clientes
           </Link>

@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navLinks, features } from "@/config/site";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,6 +44,7 @@ export default function Navbar() {
               </div>
               
               <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+                <ThemeToggle />
                 {features.enableClientPortal && (
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 opacity-60 cursor-not-allowed bg-white/5" title="Disponible próximamente">
                     Portal
@@ -57,6 +59,7 @@ export default function Navbar() {
           </div>
           
           <div className="flex items-center gap-3 xl:hidden">
+            <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="rounded-lg p-2 text-gray-300 transition hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"

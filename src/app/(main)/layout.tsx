@@ -4,6 +4,7 @@ import ConsentAwareAnalytics from "@/components/layout/ConsentAwareAnalytics";
 import AccessibilityWidget from "@/components/layout/AccessibilityWidget";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import CookieConsent from "@/components/layout/CookieConsent";
+import HelpCenter from "@/components/layout/HelpCenter";
 
 export default function MainLayout({
   children,
@@ -17,6 +18,7 @@ export default function MainLayout({
       <Footer />
       <WhatsAppButton />
       <AccessibilityWidget />
+      <HelpCenter />
       <CookieConsent />
       <ConsentAwareAnalytics />
     </div>
