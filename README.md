@@ -109,6 +109,10 @@ excerpt: "Un breve resumen para la tarjeta y el SEO."
 Contenido de tu post usando **Markdown**...
 ```
 
+## Administración de servicios
+
+La guía de arquitectura, esquema de datos, despliegue de Supabase y controles de acceso está en [docs/service-operations.md](./docs/service-operations.md).
+
 ## 🚀 Despliegue
 
 Este proyecto está optimizado para ser desplegado en [Vercel](https://vercel.com).

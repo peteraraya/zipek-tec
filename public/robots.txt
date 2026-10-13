@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://zipek.com
+Host: https://zipek.cl
 
 # Sitemaps
-Sitemap: https://zipek.com/sitemap.xml
+Sitemap: https://zipek.cl/sitemap.xml
