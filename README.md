@@ -10,7 +10,7 @@
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
   [![Framer Motion](https://img.shields.io/badge/Framer_Motion-13.0-black?style=for-the-badge&logo=framer)](https://www.framer.com/motion/)
 
-  [Visitar Sitio Web](https://zipek.com) • [Reportar un Issue](https://github.com/peteraraya)
+  [Visitar Sitio Web](https://zipek.cl) • [Reportar un Issue](https://github.com/peteraraya/zipek-tec/issues)
 </div>
 
 <br />
@@ -61,6 +61,80 @@ zipek-landing/
 - **Markdown**: `gray-matter`, `react-markdown`
 
 ## 💻 Instalación y Desarrollo Local
+
+### Requisitos
+
+- Git
+- Node.js 22.x y npm
+- Credenciales de un proyecto Supabase para las funciones que consultan datos
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/peteraraya/zipek-tec.git
+   cd zipek-tec
+   ```
+
+2. **Configurar variables de entorno**
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+   Reemplaza los valores de ejemplo en `.env` con `NEXT_PUBLIC_SUPABASE_URL` y
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY` de tu proyecto. Configura
+   `NEXT_PUBLIC_SITE_URL` para el dominio que estés usando.
+
+3. **Instalar dependencias y arrancar**
+   ```bash
+   npm ci
+   npm run dev
+   ```
+   El sitio estará disponible en [http://localhost:3000](http://localhost:3000).
+   `.env` está excluido de Git; no lo compartas ni lo subas al repositorio.
+
+### Desarrollo local con Docker Compose
+
+**Requisitos:** Docker Desktop (Windows/macOS) o Docker Engine con el plugin
+Docker Compose v2 (Linux).
+
+1. Crea `.env` desde el ejemplo y configura las variables de Supabase:
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+2. Construye la imagen de desarrollo e inicia el servidor:
+   ```bash
+   docker compose up --build
+   ```
+3. Abre [http://localhost:3000](http://localhost:3000). El código se monta en
+   el contenedor para reflejar los cambios; las dependencias y la caché de
+   Next.js se conservan en volúmenes Docker.
+4. Detén el servidor con `Ctrl+C` y luego:
+   ```bash
+   docker compose down
+   ```
+
+El puerto se publica solo en `127.0.0.1`. Para usar otro puerto local, define
+`APP_PORT` en `.env` (por ejemplo, `APP_PORT=3001`). `RESEND_API_KEY` es
+opcional para desarrollo; sin ella el formulario no envía correos reales.
+
+### Construir y ejecutar la imagen de producción localmente
+
+La imagen final usa la salida standalone de Next.js y ejecuta el proceso como
+el usuario no privilegiado `node`. Las dos variables de Supabase deben estar
+disponibles como argumentos de build porque `NEXT_PUBLIC_*` se incorporan al
+JavaScript del navegador durante la compilación:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co \
+  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key \
+  --build-arg NEXT_PUBLIC_SITE_URL=https://your-domain.example \
+  --build-arg SITE_URL=https://your-domain.example \
+  -t zipek-landing:local .
+docker run --rm --env-file .env -p 3000:3000 zipek-landing:local
+```
+
+La clave anon/publishable de Supabase es pública por diseño; nunca uses una
+clave `service_role` como argumento de build ni la incluyas en variables
+`NEXT_PUBLIC_*`. Las variables `.env` no se copian a la imagen Docker.
 
 1. **Clonar el repositorio**
    ```bash
@@ -113,16 +187,48 @@ Contenido de tu post usando **Markdown**...
 
 La guía de arquitectura, esquema de datos, despliegue de Supabase y controles de acceso está en [docs/service-operations.md](./docs/service-operations.md).
 
-## 🚀 Despliegue
+## 🚀 Despliegue y CI/CD
 
-Este proyecto está optimizado para ser desplegado en [Vercel](https://vercel.com).
-Los comandos estándar de construcción son:
+La producción se despliega en [Vercel](https://vercel.com) mediante
+`.github/workflows/ci-cd.yml`:
 
-```bash
-npm run build
-npm run start
-```
-*El script `postbuild` generará automáticamente el Sitemap del sitio.*
+1. Los pull requests dirigidos a `main` y cada push a `main` instalan las
+   dependencias bloqueadas por `package-lock.json`, ejecutan ESLint y
+   TypeScript, y construyen la imagen Docker de producción con credenciales
+   ficticias de CI. La imagen no se publica.
+2. Solo después de que esas validaciones pasen en un push a `main` (o una
+   ejecución manual en `main`), el workflow obtiene la configuración de
+   producción con Vercel CLI, genera el build preconstruido y lo despliega.
+   Los pull requests no despliegan a producción.
+3. La imagen Docker usa una compilación multi-stage: las dependencias de
+   desarrollo y herramientas de compilación quedan fuera de la imagen final,
+   que contiene únicamente el servidor standalone, los recursos estáticos y
+   Node.js como usuario no privilegiado.
+
+### Configuración inicial del pipeline
+
+1. En Vercel, importa el repositorio y configura en el entorno **Production**
+   las variables necesarias para la aplicación:
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `NEXT_PUBLIC_SITE_URL`, `SITE_URL` y, si se habilita el envío de correo,
+   `RESEND_API_KEY`. Vercel CLI las descarga durante `vercel pull`; no las
+   escribas en el workflow ni en el repositorio.
+2. Crea el environment `production` en **GitHub → Settings → Environments**.
+   Allí agrega estos *environment secrets*:
+   - `VERCEL_TOKEN`: token de despliegue de Vercel.
+   - `VERCEL_ORG_ID`: ID del equipo/cuenta de Vercel.
+   - `VERCEL_PROJECT_ID`: ID del proyecto Vercel conectado a este sitio.
+3. Si quieres aprobación antes de producción, habilita revisores requeridos
+   para el environment `production`. Evita conectar un segundo despliegue
+   automático desde Vercel para no duplicar los despliegues disparados por
+   GitHub Actions.
+4. Fusiona un pull request en `main`. El despliegue corre después de que
+   `validate` finalice correctamente. También puedes iniciarlo manualmente
+   con **Actions → CI/CD → Run workflow**, seleccionando `main`.
+
+`npm run build` ejecuta `postbuild`, que genera `sitemap.xml` y `robots.txt`.
+Vercel realiza su propia optimización y publicación; el Dockerfile sirve para
+desarrollo local y para construir/ejecutar la imagen autónoma fuera de Vercel.
 
 ---
 

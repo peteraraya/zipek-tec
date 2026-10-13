@@ -17,14 +17,18 @@ export default function AccessibilityWidget() {
 
   // Load settings from localStorage
   useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem("a11y-settings");
-      if (savedSettings) {
-        setSettings(JSON.parse(savedSettings));
+    const frame = requestAnimationFrame(() => {
+      try {
+        const savedSettings = localStorage.getItem("a11y-settings");
+        if (savedSettings) {
+          setSettings(JSON.parse(savedSettings));
+        }
+      } catch (e) {
+        console.error("Failed to load accessibility settings from localStorage", e);
       }
-    } catch (e) {
-      console.error("Failed to load accessibility settings from localStorage", e);
-    }
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   // Save settings to localStorage and apply classes to HTML element

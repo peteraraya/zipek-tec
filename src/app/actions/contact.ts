@@ -5,7 +5,16 @@ import { siteConfig } from '@/config/site';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
 
-export async function sendContactEmail(formData: any) {
+type ContactFormData = {
+  name: string;
+  email: string;
+  service: string;
+  budget: string;
+  timeline: string;
+  message: string;
+};
+
+export async function sendContactEmail(formData: ContactFormData) {
   try {
     if (!process.env.RESEND_API_KEY) {
       console.warn("RESEND_API_KEY not found. Simulating email sending...");
