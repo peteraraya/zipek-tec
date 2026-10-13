@@ -2,11 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowDown, ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
+import { getWhatsAppUrl, siteConfig } from "@/config/site";
 
 export default function Hero() {
-  const phone = siteConfig.contact.phone.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent("Hola, necesito ayuda con mi computador.")}`;
+  const whatsappUrl = getWhatsAppUrl("Hola, necesito ayuda con mi computador.");
 
   return (
     <section id="inicio" className="border-b border-white/[0.07] py-14 sm:py-20 lg:py-24">
@@ -14,7 +13,7 @@ export default function Hero() {
         <div className="max-w-2xl">
           <p className="mb-7 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            Soporte técnico · Quillota y remoto
+            Soporte técnico · {siteConfig.contact.coverageArea}
           </p>
 
           <h1 className="text-[2.5rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[4.25rem]">
@@ -67,8 +66,8 @@ export default function Hero() {
         <div className="mx-auto hidden w-full max-w-[430px] md:block">
           <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#050914] p-3 shadow-[0_32px_80px_-48px_rgba(0,0,0,0.9)]">
             <Image
-              src="/logo/logo_zipek-tecnologia.png"
-              alt="ZIPEK Tecnología: ideas que se convierten en soluciones"
+              src={siteConfig.logo}
+              alt={`${siteConfig.name}: ${siteConfig.heroCaption}`}
               width={1280}
               height={1280}
               priority
@@ -76,7 +75,7 @@ export default function Hero() {
             />
           </div>
           <p className="mt-4 text-center text-xs font-medium uppercase tracking-[0.24em] text-gray-500">
-            Ideas que se convierten en soluciones
+            {siteConfig.heroCaption}
           </p>
         </div>
       </div>

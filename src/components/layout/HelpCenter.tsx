@@ -16,7 +16,7 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { faqData, siteConfig } from "@/config/site";
+import { faqData, getWhatsAppUrl, siteConfig } from "@/config/site";
 
 type HelpAction = {
   label: string;
@@ -42,7 +42,7 @@ const contactActions: HelpAction[] = [
   { label: "Enviar una consulta", href: "/consultas" },
   {
     label: "WhatsApp",
-    href: `https://wa.me/${siteConfig.contact.phone.replace(/\D/g, "")}`,
+    href: getWhatsAppUrl(),
     external: true,
   },
 ];
@@ -57,7 +57,7 @@ const helpEntries: HelpEntry[] = [
   {
     question: "¿Qué servicios ofrecen?",
     answer:
-      "Atendemos a hogares y pymes en Quillota y coordinamos soporte remoto. Podemos revisar computadores, respaldos, instalaciones legales, seguridad, impresoras, redes y mantenimiento para negocios. El alcance y el precio se confirman antes de empezar.",
+      `Atendemos a hogares y pymes en ${siteConfig.contact.city} y coordinamos soporte remoto. Podemos revisar computadores, respaldos, instalaciones legales, seguridad, impresoras, redes y mantenimiento para negocios. El alcance y el precio se confirman antes de empezar.`,
     keywords: [
       "servicios",
       "ayuda",
@@ -81,7 +81,7 @@ const helpEntries: HelpEntry[] = [
     ],
   },
   {
-    question: "¿Cómo contacto a ZIPEK?",
+    question: `¿Cómo contacto a ${siteConfig.shortName}?`,
     answer:
       "Puedes escribirnos por WhatsApp o enviar una consulta desde el sitio. Si quieres que respondamos el formulario, indica un teléfono o correo y autoriza su uso para esa consulta. Una consulta anónima no puede recibir respuesta.",
     keywords: [
@@ -101,7 +101,7 @@ const helpEntries: HelpEntry[] = [
   {
     question: "¿Cómo sigo el estado de una reparación?",
     answer:
-      "Abre la sección Seguimiento e ingresa desde el enlace privado que te compartió ZIPEK. El código de referencia de una consulta web no sirve para consultar órdenes de servicio.",
+      `Abre la sección Seguimiento e ingresa desde el enlace privado que te compartió ${siteConfig.shortName}. El código de referencia de una consulta web no sirve para consultar órdenes de servicio.`,
     keywords: [
       "seguimiento",
       "estado",
@@ -149,7 +149,7 @@ const tourSteps = [
     target: "#inicio h1",
     title: "Empieza aquí",
     description:
-      "Conoce la propuesta de ZIPEK y elige si prefieres escribir por WhatsApp o enviar una consulta.",
+      `Conoce la propuesta de ${siteConfig.shortName} y elige si prefieres escribir por WhatsApp o enviar una consulta.`,
   },
   {
     target: "#servicios",
@@ -253,7 +253,7 @@ export default function HelpCenter() {
     {
       id: 0,
       role: "assistant",
-      text: "Hola. Soy el asistente de ayuda de ZIPEK. Puedo orientarte sobre nuestros servicios y cómo usar el sitio.",
+      text: `Hola. Soy el asistente de ayuda de ${siteConfig.shortName}. Puedo orientarte sobre nuestros servicios y cómo usar el sitio.`,
     },
   ]);
   const [tourStepIndex, setTourStepIndex] = useState(0);

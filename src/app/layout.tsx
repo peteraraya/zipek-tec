@@ -21,11 +21,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} | Soporte informático legal y cercano`,
+    default: `${siteConfig.name} | ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: ["Soporte informático", "Reparación de computadores", "Quillota", "Hogares", "Pymes", "Licencias de software"],
+  keywords: ["Soporte informático", "Reparación de computadores", siteConfig.contact.city, "Hogares", "Pymes", "Licencias de software"],
   authors: [{ name: siteConfig.founder.name }],
   creator: siteConfig.name,
   publisher: siteConfig.name,
@@ -38,12 +38,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_CL",
     url: siteConfig.url,
-    title: `${siteConfig.name} | Soporte informático legal y cercano`,
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
     siteName: siteConfig.name,
     images: [
       {
-        url: "/logo/logo_zipek-tecnologia.png",
+        url: siteConfig.logo,
         width: 1200,
         height: 630,
         alt: siteConfig.name,
@@ -52,10 +52,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | Soporte informático legal y cercano`,
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
-    images: ["/logo/logo_zipek-tecnologia.png"],
-    creator: "@zipek",
+    images: [siteConfig.logo],
+    creator: siteConfig.twitterHandle,
   },
   robots: {
     index: true,
@@ -81,7 +81,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo/logo_zipek-tecnologia.png`,
+    logo: `${siteConfig.url}${siteConfig.logo}`,
     description: siteConfig.description,
     contactPoint: {
       "@type": "ContactPoint",

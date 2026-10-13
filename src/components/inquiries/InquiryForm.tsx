@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import { getWhatsAppUrl, siteConfig } from "@/config/site";
 
 export default function InquiryForm({ initialTopic = "" }: { initialTopic?: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,9 +12,7 @@ export default function InquiryForm({ initialTopic = "" }: { initialTopic?: stri
   const [responseRequested, setResponseRequested] = useState(true);
 
   const whatsappUrl = inquiryNumber
-    ? `https://wa.me/${siteConfig.contact.phone.replace(/\D/g, "")}?text=${encodeURIComponent(
-        `Hola, registré la consulta ${inquiryNumber} y quiero agregar información.`,
-      )}`
+    ? getWhatsAppUrl(`Hola, registré la consulta ${inquiryNumber} y quiero agregar información.`)
     : "";
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -183,7 +181,7 @@ export default function InquiryForm({ initialTopic = "" }: { initialTopic?: stri
           <label className="flex items-start gap-3 text-xs leading-relaxed text-gray-400">
             <input name="contact_consent" type="checkbox" required className="mt-0.5 accent-primary" />
             <span>
-              Autorizo a ZIPEK Tecnología a usar mis datos solo para responder esta consulta. Consulta la{" "}
+              Autorizo a {siteConfig.name} a usar mis datos solo para responder esta consulta. Consulta la{" "}
               <Link href="/privacidad" className="text-primary-light underline">política de privacidad</Link>.
             </span>
           </label>

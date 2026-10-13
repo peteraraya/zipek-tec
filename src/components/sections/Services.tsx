@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
+import { siteConfig } from "@/config/site";
 
 const servicesForHome = [
   {
@@ -103,7 +104,7 @@ export default function Services() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-light">Servicios</p>
           <h2 className="mt-3 text-3xl text-white md:text-4xl">Soluciones para el día a día.</h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-gray-400 sm:text-lg">
-            Atendemos a familias y negocios en Quillota. Cuéntanos el problema y te diremos si podemos ayudarte.
+            Atendemos a familias y negocios en {siteConfig.contact.city}. Cuéntanos el problema y te diremos si podemos ayudarte.
           </p>
         </div>
 

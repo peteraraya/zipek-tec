@@ -11,7 +11,7 @@ const checklist = [
 ];
 
 const checklistFile = encodeURIComponent(
-  `Antes de consultar a ZIPEK Tecnología\n\n${checklist.map((item) => `- ${item}`).join("\n")}\n`,
+  `Antes de consultar a ${siteConfig.name}\n\n${checklist.map((item) => `- ${item}`).join("\n")}\n`,
 );
 
 export default function Features() {
@@ -52,7 +52,7 @@ export default function Features() {
           </div>
         </div>
 
-        <ProcessFlow location={siteConfig.contact.location} />
+        <ProcessFlow city={siteConfig.contact.city} />
 
         <div className="mt-10 border-t border-white/10 pt-8">
           <aside className="max-w-3xl border border-white/[0.09] bg-white/[0.02] p-5 sm:p-6">

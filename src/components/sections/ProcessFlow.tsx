@@ -61,16 +61,16 @@ const servicePaths = [
     id: "presencial",
     icon: MapPin,
     title: "Atención presencial",
-    description: "En Quillota o por coordinar según ubicación y agenda.",
+    description: "En la zona de atención o por coordinar según ubicación y agenda.",
     nextStep: "Confirmamos disponibilidad, visita, traslado y costos antes de coordinar.",
   },
 ];
 
 type ProcessFlowProps = {
-  location: string;
+  city: string;
 };
 
-export default function ProcessFlow({ location }: ProcessFlowProps) {
+export default function ProcessFlow({ city }: ProcessFlowProps) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const activePath = servicePaths.find((path) => path.id === selectedPath);
@@ -193,7 +193,7 @@ export default function ProcessFlow({ location }: ProcessFlowProps) {
             })}
           </div>
           <p className="mt-4 text-xs leading-5 text-gray-500">
-            Atendemos en {location}; fuera de esa zona confirmamos disponibilidad. No publicamos plazos fijos: agenda y tiempos se acuerdan para cada solicitud.
+            Atendemos en {city}; fuera de esa zona confirmamos disponibilidad. No publicamos plazos fijos: agenda y tiempos se acuerdan para cada solicitud.
           </p>
         </div>
 

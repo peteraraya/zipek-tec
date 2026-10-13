@@ -54,16 +54,16 @@ export default function NosotrosPage() {
                 <div className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-gradient-to-tr from-primary to-secondary flex-shrink-0 p-1">
                   <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden relative">
                     <Users className="w-16 h-16 text-primary-light absolute z-0" />
-                    <Image src="/img/pedroaraya.png" alt="Pedro Araya" width={224} height={224} className="w-full h-full object-cover opacity-80 relative z-10" />
+                    <Image src={siteConfig.founder.image} alt={siteConfig.founder.name} width={224} height={224} className="w-full h-full object-cover opacity-80 relative z-10" />
                   </div>
                 </div>
 
                 <div className="text-center md:text-left">
-                  <h2 className="text-3xl font-bold text-white mb-2">Pedro Araya Gálvez</h2>
+                  <h2 className="text-3xl font-bold text-white mb-2">{siteConfig.founder.name}</h2>
                   <div className="text-primary-light font-medium mb-4 flex items-center justify-center md:justify-start gap-2">
-                    <span>CEO & Lead Full Stack Developer</span>
+                    <span>{siteConfig.founder.role}</span>
                     <span className="w-1 h-1 bg-gray-500 rounded-full" />
-                    <span className="text-gray-400 text-sm">Quillota, Chile</span>
+                    <span className="text-gray-400 text-sm">{siteConfig.founder.location}</span>
                   </div>
                   <p className="text-gray-300 leading-relaxed mb-6 max-w-2xl">
                     &ldquo;Creo en la creación de software robusto, que solucione problemas reales sin sobrecomplicar la arquitectura.&rdquo;

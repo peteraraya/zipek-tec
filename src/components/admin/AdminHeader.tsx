@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signOutAdmin } from "@/app/actions/admin-auth";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { siteConfig } from "@/config/site";
 
 export default function AdminHeader({ name }: { name: string }) {
   return (
@@ -8,7 +9,7 @@ export default function AdminHeader({ name }: { name: string }) {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div>
           <Link href="/admin" className="text-xl font-bold tracking-tight text-white">
-            ZIPEK <span className="text-primary-light">/ Administración</span>
+            {siteConfig.shortName} <span className="text-primary-light">/ Administración</span>
           </Link>
           <p className="mt-1 text-sm text-gray-400">Sesión: {name}</p>
         </div>

@@ -8,17 +8,39 @@ import {
   Users,
 } from "lucide-react";
 
+const siteShortName = "ZIPEK";
+const businessDescriptor = "Tecnología";
+const siteName = `${siteShortName} ${businessDescriptor}`;
+const siteDomain = "gmail.com";
+const serviceTagline = "Soporte informático legal y cercano";
+const logoPath = "/logo/logo_zipek-tecnologia.png";
+const serviceCity = "Quillota";
+const serviceRegion = "Región de Valparaíso";
+const serviceCountry = "Chile";
+const founderName = "Pedro Araya Gálvez";
+const founderRole = "CEO & Lead Full Stack Developer";
+const founderImage = "/img/pedroaraya.png";
+
 export const siteConfig = {
-  name: "ZIPEK Tecnología",
-  shortName: "ZIPEK",
-  domain: "zipek.cl",
-  url: "https://zipek.cl",
+  name: siteName,
+  shortName: siteShortName,
+  descriptor: businessDescriptor,
+  domain: siteDomain,
+  url: `https://${siteDomain}`,
+  tagline: serviceTagline,
+  heroCaption: "Ideas que se convierten en soluciones",
+  logo: logoPath,
+  twitterHandle: "@zipek",
   description:
-    "Soporte informático para hogares y pymes en Quillota: diagnóstico claro, precio acordado antes de empezar y alternativas de software legales.",
+    `Soporte informático para hogares y pymes en ${serviceCity}: diagnóstico claro, precio acordado antes de empezar y alternativas de software legales.`,
   contact: {
-    email: "contacto@zipek.cl",
+    email: `piteraraya@${siteDomain}`,
     phone: "+56 9 5764 2162",
-    location: "Quillota, Región de Valparaíso, Chile",
+    location: `${serviceCity}, ${serviceRegion}, ${serviceCountry}`,
+    city: serviceCity,
+    region: serviceRegion,
+    country: serviceCountry,
+    coverageArea: `${serviceCity} y remoto`,
   },
   links: {
     linkedin: "https://www.linkedin.com",
@@ -28,12 +50,25 @@ export const siteConfig = {
     portfolio: "https://pedroaraya.vercel.app/",
   },
   founder: {
-    name: "ZIPEK Tecnología",
-    role: "Soporte informático legal y cercano",
-    location: "Quillota, Chile",
-    image: "/logo/logo_zipek-tecnologia.png",
+    name: founderName,
+    role: founderRole,
+    location: `${serviceCity}, ${serviceCountry}`,
+    image: founderImage,
   },
-};
+} as const;
+
+export type SiteConfiguration = typeof siteConfig;
+
+export function getWhatsAppUrl(message?: string) {
+  const phoneNumber = siteConfig.contact.phone.replace(/\D/g, "");
+  const query = message ? `?text=${encodeURIComponent(message)}` : "";
+
+  return `https://wa.me/${phoneNumber}${query}`;
+}
+
+export function getEmailUrl() {
+  return `mailto:${siteConfig.contact.email}`;
+}
 
 export const features = {
   enablePortfolio: false,
@@ -212,7 +247,7 @@ export const faqData = [
     answer: "Depende del trabajo acordado. Si corresponde una garantía, antes de autorizar te indicamos por escrito su alcance, duración y exclusiones. No hay una garantía universal para todos los servicios."
   },
   {
-    question: "¿Hacen visitas fuera de Quillota o atención urgente?",
+    question: `¿Hacen visitas fuera de ${siteConfig.contact.city} o atención urgente?`,
     answer: "La disponibilidad depende de la ubicación y la agenda. Escríbenos antes para confirmar si podemos ir y cuál sería el costo. La atención urgente también está sujeta a disponibilidad y su recargo se informa antes de confirmar."
   }
 ];

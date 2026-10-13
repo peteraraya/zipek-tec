@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { getWhatsAppUrl, siteConfig } from "@/config/site";
 import TrackingLookup from "@/components/tracking/TrackingLookup";
 
 export const metadata: Metadata = {
   title: "Seguimiento de servicio",
-  description: "Consulta el estado actualizado de tu servicio técnico ZIPEK.",
+  description: `Consulta el estado actualizado de tu servicio técnico ${siteConfig.shortName}.`,
   robots: { index: false, follow: false },
 };
 
 export default function TrackingPage() {
-  const phone = siteConfig.contact.phone.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent("Hola, tengo una consulta sobre un servicio de ZIPEK.")}`;
+  const whatsappUrl = getWhatsAppUrl(`Hola, tengo una consulta sobre un servicio de ${siteConfig.shortName}.`);
 
   return (
     <main className="px-4 pb-20 pt-12 sm:pt-16">
@@ -19,7 +18,7 @@ export default function TrackingPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-light">Atención transparente</p>
         <h1 className="mt-4 text-4xl font-bold text-white sm:text-5xl">Seguimiento de servicio</h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-400">
-          Revisa el estado de tu equipo y las actualizaciones que ZIPEK comparte contigo.
+          Revisa el estado de tu equipo y las actualizaciones que {siteConfig.shortName} comparte contigo.
         </p>
       </div>
       <div className="mt-10"><TrackingLookup /></div>

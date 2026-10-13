@@ -1,6 +1,6 @@
 
 
-import { siteConfig } from "@/config/site";
+import { getEmailUrl, siteConfig } from "@/config/site";
 
 export default function PrivacidadPage() {
   return (
@@ -44,12 +44,12 @@ export default function PrivacidadPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">4. Encargados y terceros proveedores</h2>
             <p>
-              La información puede alojarse en proveedores de infraestructura que permiten operar el sitio y el panel de gestión. El equipo de ZIPEK limita el acceso a quienes atienden el servicio.
+              La información puede alojarse en proveedores de infraestructura que permiten operar el sitio y el panel de gestión. El equipo de {siteConfig.shortName} limita el acceso a quienes atienden el servicio.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">5. Tus derechos</h2>
             <p>
-              Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, cancelación, oposición y portabilidad sobre tus datos personales, escribiendo a <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">{siteConfig.contact.email}</a>. Responderemos tu solicitud dentro de los plazos que establece la normativa vigente.
+              Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, cancelación, oposición y portabilidad sobre tus datos personales, escribiendo a <a href={getEmailUrl()} className="text-primary hover:underline">{siteConfig.contact.email}</a>. Responderemos tu solicitud dentro de los plazos que establece la normativa vigente.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">6. Seguridad de la información</h2>
@@ -71,7 +71,7 @@ export default function PrivacidadPage() {
             <p>
               Para cualquier consulta sobre esta Política de Privacidad o el tratamiento de tus datos personales, contáctanos en:
               <br />
-              Correo: <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">{siteConfig.contact.email}</a>
+              Correo: <a href={getEmailUrl()} className="text-primary hover:underline">{siteConfig.contact.email}</a>
             </p>
           </div>
         </div>

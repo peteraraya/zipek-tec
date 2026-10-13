@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { navLinks, features } from "@/config/site";
+import { navLinks, features, siteConfig } from "@/config/site";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
@@ -17,14 +17,14 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/logo/logo_zipek-tecnologia.png" 
-                alt="Zipek Tecnología Logo" 
+                src={siteConfig.logo}
+                alt={siteConfig.name}
                 width={40} 
                 height={40} 
                 className="rounded-full"
               />
               <span className="hidden text-2xl font-semibold tracking-[-0.035em] sm:block">
-                <span className="text-white">zipek</span>
+                <span className="text-white">{siteConfig.shortName.toLowerCase()}</span>
               </span>
             </Link>
           </div>

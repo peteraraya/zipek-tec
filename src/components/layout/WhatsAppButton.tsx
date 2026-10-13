@@ -1,15 +1,12 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { features, siteConfig } from "@/config/site";
+import { features, getWhatsAppUrl } from "@/config/site";
 
 export default function WhatsAppButton() {
   if (!features.enableWhatsApp) return null;
 
-  // Format phone number (remove spaces, plus, etc if needed) for the whatsapp URL
-  const phoneNumber = siteConfig.contact.phone.replace(/[^0-9]/g, "");
-  const message = encodeURIComponent("¡Hola! Quiero agendar un diagnóstico de mi equipo o consultar un servicio de soporte informático.");
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+  const whatsappUrl = getWhatsAppUrl("¡Hola! Quiero agendar un diagnóstico de mi equipo o consultar un servicio de soporte informático.");
 
   return (
     <a

@@ -3,6 +3,7 @@ import PrintButton from "@/components/admin/PrintButton";
 import { notFound } from "next/navigation";
 import { AdminRecordNotFoundError, getServiceOrder } from "@/lib/admin/queries";
 import { serviceStatusLabels } from "@/lib/admin/types";
+import { siteConfig } from "@/config/site";
 
 function Blank({ lines = 1 }: { lines?: number }) {
   return <span className={`inline-block min-w-32 border-b border-gray-600 ${lines > 1 ? "min-h-12" : "min-h-6"}`} />;
@@ -28,8 +29,8 @@ export default async function ServiceDocumentsPage({ params }: { params: Promise
       <article className="print-document rounded-xl bg-white p-8 shadow-xl print:rounded-none print:p-10 print:shadow-none">
         <header className="flex items-start justify-between gap-6 border-b border-gray-300 pb-5">
           <div>
-            <p className="text-2xl font-bold tracking-wide">ZIPEK TECNOLOGÍA</p>
-            <p className="mt-1 text-sm">WhatsApp +56 9 5764 2162 · Quillota, Región de Valparaíso</p>
+            <p className="text-2xl font-bold tracking-wide uppercase">{siteConfig.name}</p>
+            <p className="mt-1 text-sm">WhatsApp {siteConfig.contact.phone} · {siteConfig.contact.city}, {siteConfig.contact.region}</p>
           </div>
           <div className="text-right text-sm">
             <p className="font-semibold">ANEXO A · ORDEN DE SERVICIO</p>
@@ -65,7 +66,7 @@ export default async function ServiceDocumentsPage({ params }: { params: Promise
             <li>El cliente autoriza únicamente los servicios descritos en esta orden. Todo trabajo adicional requiere nueva autorización y precio acordado.</li>
             <li>La información del equipo se utiliza solo para realizar el servicio; las copias temporales se eliminan al finalizar.</li>
             <li>Se ofrece respaldo de datos antes de intervenir. Si el cliente lo rechaza, queda informado del riesgo de pérdida de información.</li>
-            <li>ZIPEK no instala ni activa software sin licencia; se ofrecerán alternativas legales o gratuitas.</li>
+            <li>{siteConfig.shortName} no instala ni activa software sin licencia; se ofrecerán alternativas legales o gratuitas.</li>
             <li>Garantía de <strong>{order.warranty_days} días corridos</strong> desde la entrega, limitada al trabajo realizado.</li>
             <li>El precio indicado no cambia sin autorización escrita del cliente.</li>
           </ul>
@@ -73,15 +74,15 @@ export default async function ServiceDocumentsPage({ params }: { params: Promise
 
         <div className="document-section mt-12 grid grid-cols-2 gap-12 text-center text-sm">
           <p className="border-t border-gray-600 pt-2">Firma del cliente</p>
-          <p className="border-t border-gray-600 pt-2">Firma ZIPEK Tecnología</p>
+          <p className="border-t border-gray-600 pt-2">Firma {siteConfig.name}</p>
         </div>
 
         <div className="page-break my-10 border-t-2 border-dashed border-gray-300 print:my-0 print:border-0" />
 
         <header className="flex items-start justify-between gap-6 border-b border-gray-300 pb-5">
           <div>
-            <p className="text-2xl font-bold tracking-wide">ZIPEK TECNOLOGÍA</p>
-            <p className="mt-1 text-sm">WhatsApp +56 9 5764 2162 · Quillota, Región de Valparaíso</p>
+            <p className="text-2xl font-bold tracking-wide uppercase">{siteConfig.name}</p>
+            <p className="mt-1 text-sm">WhatsApp {siteConfig.contact.phone} · {siteConfig.contact.city}, {siteConfig.contact.region}</p>
           </div>
           <div className="text-right text-sm">
             <p className="font-semibold">ANEXO B · INFORME DE SERVICIO</p>
@@ -122,7 +123,7 @@ export default async function ServiceDocumentsPage({ params }: { params: Promise
 
         <div className="document-section mt-12 grid grid-cols-2 gap-12 text-center text-sm">
           <p className="border-t border-gray-600 pt-2">Firma del cliente (conforme)</p>
-          <p className="border-t border-gray-600 pt-2">Firma ZIPEK Tecnología</p>
+          <p className="border-t border-gray-600 pt-2">Firma {siteConfig.name}</p>
         </div>
       </article>
     </main>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { siteConfig } from "@/config/site";
+import { getEmailUrl, getWhatsAppUrl, siteConfig } from "@/config/site";
 import CookiePreferencesButton from "@/components/layout/CookiePreferencesButton";
 
 export default function Footer() {
@@ -10,22 +10,22 @@ export default function Footer() {
         <div className="mb-10 flex flex-col items-center justify-between gap-6 md:flex-row">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/logo/logo_zipek-tecnologia.png"
-              alt="Zipek Tecnología Logo"
+              src={siteConfig.logo}
+              alt={siteConfig.name}
               width={48}
               height={48}
               className="rounded-full"
             />
             <span className="text-3xl font-semibold tracking-[-0.035em]">
-              <span className="text-white">zipek</span>
+              <span className="text-white">{siteConfig.shortName.toLowerCase()}</span>
             </span>
           </Link>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-gray-400 md:justify-end">
-            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+            <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               WhatsApp
             </a>
-            <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-white transition-colors">
+            <a href={getEmailUrl()} className="hover:text-white transition-colors">
               Correo
             </a>
             <span>{siteConfig.contact.location}</span>
@@ -50,7 +50,7 @@ export default function Footer() {
               Seguridad
             </Link>
             <CookiePreferencesButton />
-            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}?text=Hola%2C%20necesito%20ayuda%20con%20un%20equipo.`} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-1.5 text-gray-400 transition-colors hover:border-primary-light/40 hover:text-white">
+            <a href={getWhatsAppUrl("Hola, necesito ayuda con un equipo.")} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-1.5 text-gray-400 transition-colors hover:border-primary-light/40 hover:text-white">
               WhatsApp
             </a>
           </div>

@@ -1,6 +1,6 @@
 
 
-import { siteConfig } from "@/config/site";
+import { getEmailUrl, siteConfig } from "@/config/site";
 
 export default function TerminosPage() {
   return (
@@ -60,7 +60,7 @@ export default function TerminosPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">9. Contacto</h2>
             <p>
-              Ante cualquier duda sobre estos Términos y Condiciones, puedes escribirnos a <a href={`mailto:${siteConfig.contact.email}`} className="text-primary hover:underline">{siteConfig.contact.email}</a>.
+              Ante cualquier duda sobre estos Términos y Condiciones, puedes escribirnos a <a href={getEmailUrl()} className="text-primary hover:underline">{siteConfig.contact.email}</a>.
             </p>
           </div>
         </div>

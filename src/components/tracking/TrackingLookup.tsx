@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { serviceStatusLabels, type ServiceStatus } from "@/lib/admin/types";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { siteConfig } from "@/config/site";
 
 interface TrackingData {
   order_number: string;
@@ -124,7 +125,7 @@ export default function TrackingLookup() {
       void loadTracking(normalizedToken);
     } else {
       setIsLoading(false);
-      setError("Ingresa el código completo que recibiste de ZIPEK.");
+      setError(`Ingresa el código completo que recibiste de ${siteConfig.shortName}.`);
     }
   };
 
