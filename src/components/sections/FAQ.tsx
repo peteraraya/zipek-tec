@@ -32,17 +32,25 @@ export default function FAQ() {
                 className="border border-white/10 bg-white/5 rounded-2xl overflow-hidden"
               >
                 <button
+                  type="button"
+                  id={`faq-trigger-${index}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-panel-${index}`}
                   className="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
                   <span className="font-semibold text-white">{faq.question}</span>
-                  <ChevronDown 
+                  <ChevronDown
+                    aria-hidden="true"
                     className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} 
                   />
                 </button>
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
+                      id={`faq-panel-${index}`}
+                      role="region"
+                      aria-labelledby={`faq-trigger-${index}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}

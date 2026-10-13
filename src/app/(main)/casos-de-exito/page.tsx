@@ -4,9 +4,10 @@ import { portfolioData, features } from "@/config/site";
 import FadeIn from "@/components/layout/FadeIn";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default function CasosDeExitoPage() {
-  if (!features.enablePortfolio) return null;
+  if (!features.enablePortfolio) notFound();
 
   return (
     <>

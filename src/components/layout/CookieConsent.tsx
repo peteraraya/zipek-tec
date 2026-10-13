@@ -1,46 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { features } from "@/config/site";
 
-export default function CookieConsent() {
-  const [showConsent, setShowConsent] = useState(false);
-
-  useEffect(() => {
-    // Check local storage for consent
-    const consent = localStorage.getItem("cookie-consent");
-    if (!consent) {
-      setShowConsent(true);
-    }
-  }, []);
-
-  const acceptCookies = () => {
-    localStorage.setItem("cookie-consent", "accepted");
-    setShowConsent(false);
+const subscribe = (callback: () => void) => {
+  window.addEventListener("zipek-cookie-preferences", callback);
+  window.addEventListener("zipek-cookie-consent-change", callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener("zipek-cookie-preferences", callback);
+    window.removeEventListener("zipek-cookie-consent-change", callback);
+    window.removeEventListener("storage", callback);
   };
+};
 
-  const declineCookies = () => {
-    localStorage.setItem("cookie-consent", "declined");
-    setShowConsent(false);
+const getSnapshot = () =>
+  localStorage.getItem("cookie-consent") === null ||
+  window.sessionStorage.getItem("zipek-cookie-preferences-open") === "true";
+
+const getServerSnapshot = () => false;
+
+export default function CookieConsent() {
+  const showConsent = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  const saveChoice = (choice: "accepted" | "declined") => {
+    localStorage.setItem("cookie-consent", choice);
+    window.sessionStorage.removeItem("zipek-cookie-preferences-open");
+    window.dispatchEvent(new Event("zipek-cookie-consent-change"));
   };
 
   if (!features.enableCookieBanner || !showConsent) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-md">
-      <div className="bg-background/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-        <h3 className="text-lg font-semibold text-white mb-2">Usamos Cookies 🍪</h3>
-        <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-          Utilizamos cookies esenciales y analíticas para mejorar tu experiencia y cumplir con la legislación chilena vigente. Puedes configurar tu preferencia. Lee más en nuestra <Link href="/privacidad" className="text-primary hover:underline">Política de Privacidad</Link>.
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-md sm:p-0">
+      <div role="region" aria-labelledby="cookie-consent-title" className="rounded-2xl border border-white/10 bg-background/95 p-3 shadow-2xl backdrop-blur-xl sm:p-6">
+        <h2 id="cookie-consent-title" className="mb-1 text-sm font-semibold text-white sm:mb-2 sm:text-lg">Preferencias de analítica</h2>
+        <p className="mb-2 text-xs leading-relaxed text-gray-400 sm:mb-5 sm:text-sm">
+          Vercel Analytics solo se activa si aceptas. Puedes cambiar tu decisión en el pie de página.{" "}
+          <Link href="/privacidad" className="text-primary hover:underline">Privacidad</Link>.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button onClick={acceptCookies} className="w-full sm:w-auto">
-            Aceptar todas
+        <div className="flex gap-2 sm:gap-3">
+          <Button onClick={() => saveChoice("accepted")} className="h-10 w-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm">
+            Aceptar analítica
           </Button>
-          <Button onClick={declineCookies} variant="outline" className="w-full sm:w-auto">
-            Rechazar opcionales
+          <Button onClick={() => saveChoice("declined")} variant="outline" className="h-10 w-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm">
+            No aceptar
           </Button>
         </div>
       </div>

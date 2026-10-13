@@ -1,12 +1,13 @@
 
 
 import { siteConfig, features } from "@/config/site";
+import { notFound } from "next/navigation";
 import { Users, Target, Rocket } from "lucide-react";
 import FadeIn from "@/components/layout/FadeIn";
 import Image from "next/image";
 
 export default function NosotrosPage() {
-  if (!features.enableAboutUs) return null;
+  if (!features.enableAboutUs) notFound();
 
   return (
     <>
@@ -65,7 +66,7 @@ export default function NosotrosPage() {
                     <span className="text-gray-400 text-sm">Quillota, Chile</span>
                   </div>
                   <p className="text-gray-300 leading-relaxed mb-6 max-w-2xl">
-                    "Creo en la creación de software robusto, que solucione problemas reales sin sobrecomplicar la arquitectura."
+                    &ldquo;Creo en la creación de software robusto, que solucione problemas reales sin sobrecomplicar la arquitectura.&rdquo;
                     <br /><br />
                     Con años de experiencia *end-to-end* implementando tecnologías como React, Node.js, NestJS y ecosistemas Serverless (AWS, Supabase), dirijo {siteConfig.shortName} con un objetivo claro: trasladar el estándar de calidad de la gran industria directamente a las pymes y empresas emergentes.
                   </p>

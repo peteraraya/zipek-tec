@@ -1,56 +1,58 @@
 
 
-import { Shield, Lock, Server, Cloud } from "lucide-react";
+import Link from "next/link";
+import { DatabaseBackup, FileCheck2, KeyRound, ShieldCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export default function SeguridadPage() {
+  const practices = [
+    {
+      icon: FileCheck2,
+      title: "Trabajamos con autorización",
+      description: "Antes de intervenir, dejamos claro qué trabajo se realizará y cuánto costará. Si hace falta algo más, te lo consultamos antes.",
+    },
+    {
+      icon: DatabaseBackup,
+      title: "Conversamos sobre tus respaldos",
+      description: "Te ofrecemos respaldar los datos antes del trabajo. Si prefieres no hacerlo, dejamos constancia de esa decisión y del riesgo.",
+    },
+    {
+      icon: KeyRound,
+      title: "Acceso remoto solo contigo",
+      description: "Nos conectamos de forma remota únicamente en una sesión que autorizas. No guardamos tus contraseñas en el teléfono ni en papel.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Software legal y copias temporales",
+      description: "No instalamos programas sin licencia. Usamos tus datos solo para el servicio y eliminamos las copias temporales al terminar.",
+    },
+  ];
+
   return (
-    <>
-      <main className="flex-grow pt-32 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Seguridad y <span className="text-gradient">Arquitectura</span></h1>
-            <p className="text-gray-400 text-lg">
-              En {siteConfig.name}, la seguridad de la información no es una característica opcional, es la base de todos nuestros desarrollos corporativos.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <Shield className="w-10 h-10 text-primary-light mb-6" />
-              <h3 className="text-xl font-bold text-white mb-3">Protección de Datos</h3>
-              <p className="text-gray-400">
-                Toda la información viaja encriptada bajo estándares TLS 1.3. Las contraseñas se almacenan mediante algoritmos de hashing robustos (Bcrypt/Argon2) y cumplimos con los lineamientos de la Ley 19.628 de Chile.
-              </p>
-            </div>
-            
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <Lock className="w-10 h-10 text-primary-light mb-6" />
-              <h3 className="text-xl font-bold text-white mb-3">Autenticación Segura</h3>
-              <p className="text-gray-400">
-                Implementamos flujos de autenticación modernos, soporte para Single Sign-On (SSO), OAuth2, y Multi-Factor Authentication (MFA) para paneles administrativos críticos.
-              </p>
-            </div>
-            
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <Server className="w-10 h-10 text-primary-light mb-6" />
-              <h3 className="text-xl font-bold text-white mb-3">Respaldos Automáticos</h3>
-              <p className="text-gray-400">
-                Configuramos políticas de respaldos (Backups) diarios automatizados para bases de datos transaccionales, asegurando un punto de restauración en caso de desastres (Disaster Recovery).
-              </p>
-            </div>
-            
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <Cloud className="w-10 h-10 text-primary-light mb-6" />
-              <h3 className="text-xl font-bold text-white mb-3">Arquitectura Cloud</h3>
-              <p className="text-gray-400">
-                Desplegamos en entornos de nube de clase mundial (AWS, Vercel, Google Cloud) garantizando un 99.9% de Uptime, autoescalado ante picos de tráfico y defensa contra ataques DDoS.
-              </p>
-            </div>
-          </div>
-
+    <main className="flex-grow px-4 pb-20 pt-32">
+      <div className="mx-auto max-w-5xl">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-light">{siteConfig.name}</p>
+          <h1 className="mt-3 text-4xl font-bold text-white md:text-5xl">Cómo cuidamos tus datos y equipos</h1>
+          <p className="mt-5 text-lg leading-relaxed text-gray-400">
+            En cada servicio conversamos contigo sobre el acceso al equipo, tus archivos y el trabajo que autorizas.
+          </p>
         </div>
-      </main>
-      </>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          {practices.map(({ icon: Icon, title, description }) => (
+            <article key={title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+              <Icon className="h-8 w-8 text-primary-light" aria-hidden="true" />
+              <h2 className="mt-4 text-xl font-semibold text-white">{title}</h2>
+              <p className="mt-3 leading-relaxed text-gray-400">{description}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-8 text-center text-sm text-gray-400">
+          Si tienes preguntas sobre el uso de tus datos, revisa la{" "}
+          <Link href="/privacidad" className="text-primary-light underline">política de privacidad</Link>.
+        </p>
+      </div>
+    </main>
   );
 }

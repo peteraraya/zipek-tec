@@ -69,7 +69,7 @@ export default function AccessibilityWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-2 right-2 z-50 sm:bottom-6 sm:right-6">
       {isOpen && (
         <div className="absolute bottom-16 right-0 mb-2 w-72 rounded-2xl border border-white/10 bg-background/95 backdrop-blur-xl p-4 shadow-2xl">
           <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
@@ -149,7 +149,7 @@ export default function AccessibilityWidget() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center justify-center w-14 h-14 rounded-full shadow-lg shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+          "flex h-12 w-12 items-center justify-center rounded-full shadow-lg shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background sm:h-14 sm:w-14",
           isOpen ? "bg-white/10 text-white border border-white/20" : "bg-primary hover:bg-primary-light text-white"
         )}
         aria-label="Abrir menú de accesibilidad"

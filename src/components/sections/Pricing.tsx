@@ -23,11 +23,17 @@ export default function Pricing() {
             Planes para <span className="text-gradient">tu tranquilidad</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-            Atención clara, respaldo real y soporte pensado para hogares y pymes que necesitan equipos funcionando bien.
+            Opciones para una atención puntual o soporte periódico. Te confirmamos el alcance y el precio antes de empezar.
+          </p>
+          <p className="mx-auto -mt-3 mb-8 max-w-2xl text-sm leading-relaxed text-gray-500">
+            Los valores dependen del equipo, el trabajo necesario y, cuando corresponda, repuestos o desplazamiento.
+            Consulta si la revisión tiene costo y qué incluye cada servicio antes de coordinar.
           </p>
 
           <div className="inline-flex items-center p-1 bg-white/5 border border-white/10 rounded-full">
             <button
+              type="button"
+              aria-pressed={!isSupport}
               onClick={() => setIsSupport(false)}
               className={cn(
                 "px-6 py-2 rounded-full text-sm font-medium transition-all",
@@ -37,6 +43,8 @@ export default function Pricing() {
               Hogar / Personas
             </button>
             <button
+              type="button"
+              aria-pressed={isSupport}
               onClick={() => setIsSupport(true)}
               className={cn(
                 "px-6 py-2 rounded-full text-sm font-medium transition-all",
@@ -52,23 +60,12 @@ export default function Pricing() {
           {currentData.map((plan, idx) => (
             <Card
               key={idx}
-              className={cn(
-                "relative flex flex-col transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10",
-                plan.recommended ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10" : "border-white/10 bg-white/5"
-              )}
+              className="relative flex flex-col border-white/10 bg-white/5 transition-colors hover:border-primary/40"
             >
-              {plan.recommended && (
-                <div className="absolute -top-4 left-0 right-0 flex justify-center">
-                  <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                    Recomendado
-                  </span>
-                </div>
-              )}
-
               <CardHeader className="text-center pb-8 pt-8">
                 <CardTitle className="text-xl text-gray-300 mb-2">{plan.title}</CardTitle>
-                <div className="text-4xl font-bold text-white mb-4">{plan.price}</div>
-                <CardDescription className="text-sm h-10 flex items-center justify-center text-gray-400">
+                <div className="min-h-16 flex items-center justify-center text-2xl font-bold text-white sm:text-3xl">{plan.price}</div>
+                <CardDescription className="min-h-10 text-sm text-gray-400">
                   {plan.description}
                 </CardDescription>
               </CardHeader>
@@ -87,15 +84,49 @@ export default function Pricing() {
               <CardFooter className="pt-8">
                 <Button
                   asChild
-                  variant={plan.recommended ? "default" : "outline"}
+                  variant="outline"
                   className="w-full"
                   size="lg"
                 >
-                  <Link href="#contacto">{plan.cta}</Link>
+                  <Link href={`/consultas?tema=${encodeURIComponent(plan.title)}`}>{plan.cta}</Link>
                 </Button>
               </CardFooter>
             </Card>
           ))}
+        </div>
+
+        <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+          <h3 className="text-xl font-semibold text-white">Qué confirmamos antes de empezar</h3>
+          <ol className="mt-5 grid gap-5 sm:grid-cols-3">
+            {[
+              {
+                title: "Revisión y disponibilidad",
+                description: "Aclaramos el problema, la modalidad de atención y si corresponde un costo de revisión o visita.",
+              },
+              {
+                title: "Alcance y costos",
+                description: "Te explicamos el trabajo propuesto y los costos que correspondan, incluidos repuestos o licencias.",
+              },
+              {
+                title: "Tu autorización",
+                description: "Solo comenzamos con tu aprobación. Si surge un trabajo adicional, te consultamos antes.",
+              },
+            ].map((step, index) => (
+              <li key={step.title} className="flex gap-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary-light">
+                  {index + 1}
+                </span>
+                <div>
+                  <h4 className="font-medium text-white">{step.title}</h4>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-400">{step.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 border-t border-white/10 pt-4 text-xs leading-relaxed text-gray-500">
+            Las tarjetas describen servicios que podemos cotizar; no representan una tarifa fija ni confirman disponibilidad.
+            El alcance, exclusiones, garantía y condiciones aplicables se acuerdan para cada caso.
+          </p>
         </div>
       </div>
     </section>

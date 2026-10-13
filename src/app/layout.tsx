@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
-import AccessibilityWidget from "@/components/layout/AccessibilityWidget";
-import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import CookieConsent from "@/components/layout/CookieConsent";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
-import { Analytics } from "@vercel/analytics/react";
 import type { Viewport } from "next";
 import "./globals.css";
 
@@ -28,8 +24,8 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: ["Soporte informático", "Reparación de computadores", "Hogar", "Pymes", "Quillota", "Zipek Tecnología", "Licencias y seguridad digital"],
-  authors: [{ name: siteConfig.founder.name, url: siteConfig.links.linkedin }],
+  keywords: ["Soporte informático", "Reparación de computadores", "Quillota", "Hogares", "Pymes", "Licencias de software"],
+  authors: [{ name: siteConfig.founder.name }],
   creator: siteConfig.name,
   publisher: siteConfig.name,
   formatDetection: {
@@ -86,11 +82,6 @@ export default function RootLayout({
     url: siteConfig.url,
     logo: `${siteConfig.url}/logo/logo_zipek-tecnologia.png`,
     description: siteConfig.description,
-    sameAs: [
-      siteConfig.links.linkedin,
-      siteConfig.links.instagram,
-      siteConfig.links.twitter,
-    ],
     contactPoint: {
       "@type": "ContactPoint",
       email: siteConfig.contact.email,
@@ -112,11 +103,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
           {children}
-          <WhatsAppButton />
-          <AccessibilityWidget />
-          <CookieConsent />
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );

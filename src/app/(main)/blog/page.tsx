@@ -5,9 +5,10 @@ import FadeIn from "@/components/layout/FadeIn";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { getBlogPosts } from "@/lib/mdx";
+import { notFound } from "next/navigation";
 
 export default function BlogPage() {
-  if (!features.enableBlog) return null;
+  if (!features.enableBlog) notFound();
 
   return (
     <>

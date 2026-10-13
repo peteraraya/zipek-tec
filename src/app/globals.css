@@ -106,3 +106,40 @@ html.a11y-dyslexia {
 html.a11y-dyslexia * {
   font-family: "Comic Sans MS", "OpenDyslexic", sans-serif !important;
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    overflow: visible !important;
+  }
+
+  body * {
+    color: #111 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-document {
+    background: #fff !important;
+  }
+
+  .page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .document-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

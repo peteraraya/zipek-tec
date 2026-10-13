@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/config/site";
+import CookiePreferencesButton from "@/components/layout/CookiePreferencesButton";
 
 export default function Footer() {
   return (
@@ -21,7 +22,7 @@ export default function Footer() {
           </Link>
 
           <div className="flex items-center gap-6 text-sm text-gray-400">
-            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               WhatsApp
             </a>
             <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-white transition-colors">
@@ -48,9 +49,9 @@ export default function Footer() {
             <Link href="/seguridad" className="text-gray-500 hover:text-white transition-colors">
               Seguridad
             </Link>
-            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}?text=Hola%2C%20quiero%20agendar%20un%20diagn%C3%B3stico.`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors border border-white/10 px-3 py-1.5 rounded-full bg-white/5 ml-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Atención por WhatsApp
+            <CookiePreferencesButton />
+            <a href={`https://wa.me/${siteConfig.contact.phone.replace(/[^0-9]/g, "")}?text=Hola%2C%20necesito%20ayuda%20con%20un%20equipo.`} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-gray-400 transition-colors hover:text-white">
+              WhatsApp
             </a>
           </div>
         </div>

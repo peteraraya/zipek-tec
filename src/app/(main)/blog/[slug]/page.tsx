@@ -1,7 +1,7 @@
 
 
 import { getPostBySlug, getBlogPosts } from "@/lib/mdx";
-import { siteConfig } from "@/config/site";
+import { features, siteConfig } from "@/config/site";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -20,6 +20,7 @@ export default async function BlogPost({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (!features.enableBlog) notFound();
   const { slug } = await params;
   const post = getPostBySlug(slug);
 

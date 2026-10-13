@@ -1,6 +1,6 @@
 
 
-import { portfolioData } from "@/config/site";
+import { features, portfolioData } from "@/config/site";
 import { notFound } from "next/navigation";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -17,6 +17,7 @@ export default async function CasoDeExito({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (!features.enablePortfolio) notFound();
   const { slug } = await params;
   const project = portfolioData.find((p) => p.slug === slug);
 

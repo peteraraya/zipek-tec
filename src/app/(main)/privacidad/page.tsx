@@ -12,13 +12,14 @@ export default function PrivacidadPage() {
           
           <div className="space-y-6 text-gray-300">
             <p>
-              <strong>{siteConfig.name} ("{siteConfig.shortName}", "nosotros")</strong> es responsable del tratamiento de los datos personales que recolecta a través de su sitio web y en el marco de la prestación de sus servicios de desarrollo de software, sitios web, soporte remoto y consultoría tecnológica. Esta Política de Privacidad describe qué datos recolectamos, para qué los usamos, y qué derechos tienes sobre ellos, en conformidad con la legislación chilena vigente en materia de protección de datos personales.
+              <strong>{siteConfig.name} ({siteConfig.shortName})</strong> trata los datos que compartes al hacer una consulta o contratar soporte informático. Aquí explicamos qué información recibimos, para qué la usamos y cómo puedes contactarnos para solicitar su revisión o eliminación, cuando corresponda.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">1. Datos que recolectamos</h2>
             <p>Dependiendo de cómo interactúes con nosotros, podemos recolectar:</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Datos de contacto:</strong> nombre, correo electrónico, teléfono, empresa y cargo, cuando completas un formulario de contacto o solicitas una cotización.</li>
+              <li><strong>Datos de contacto:</strong> nombre, correo electrónico y teléfono cuando los proporcionas para una consulta o servicio.</li>
+              <li><strong>Consultas web:</strong> tema y mensaje enviados mediante el formulario. Puedes enviarlos sin identificarte; el nombre, correo y teléfono son opcionales.</li>
               <li><strong>Datos de facturación:</strong> razón social, RUT, dirección, necesarios para emitir documentos tributarios.</li>
               <li><strong>Datos técnicos de navegación:</strong> dirección IP, tipo de navegador, páginas visitadas, mediante cookies o herramientas de analítica web.</li>
               <li><strong>Datos de acceso a sistemas:</strong> en el marco de servicios de soporte remoto, podemos acceder temporalmente a sistemas, credenciales o información que tú nos facilites expresamente para resolver una incidencia.</li>
@@ -28,21 +29,22 @@ export default function PrivacidadPage() {
             <p>Usamos tus datos personales para:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Responder consultas, cotizar y ejecutar los proyectos o servicios contratados.</li>
+              <li>Si autorizas expresamente el uso de tus datos de contacto en el formulario, utilizarlos solo para responder y dar seguimiento a esa consulta. No los usamos para publicidad.</li>
               <li>Emitir facturas, boletas y demás documentos tributarios.</li>
-              <li>Prestar soporte técnico remoto sobre los sistemas que administras o que hemos desarrollado para ti.</li>
-              <li>Enviar comunicaciones relacionadas con el servicio contratado (avisos, actualizaciones, vencimientos).</li>
+              <li>Prestar soporte técnico remoto o presencial sobre los equipos y sistemas que nos solicites revisar.</li>
+              <li>Enviar comunicaciones relacionadas con un servicio que hayas solicitado o contratado.</li>
               <li>Cumplir obligaciones legales y tributarias.</li>
             </ul>
             <p>No vendemos ni compartimos tus datos personales con terceros para fines de marketing sin tu consentimiento expreso.</p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">3. Base de licitud y conservación</h2>
             <p>
-              Tratamos tus datos en base a la ejecución del contrato de servicios entre las partes, tu consentimiento cuando corresponda (por ejemplo, para envío de comunicaciones comerciales), y el cumplimiento de obligaciones legales. Conservamos tus datos mientras exista una relación contractual vigente y, posteriormente, durante los plazos exigidos por la normativa tributaria y comercial aplicable en Chile.
+              Los datos de contacto del formulario se guardan únicamente si marcas la autorización y necesitamos un teléfono o correo para responder. Sin esa autorización, el formulario no conserva los campos de contacto. Conservamos las consultas mientras sean necesarias para atenderlas; los documentos de servicios contratados pueden conservarse por el tiempo que exijan las obligaciones aplicables. No usamos los datos de consultas para publicidad.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">4. Encargados y terceros proveedores</h2>
             <p>
-              Podemos compartir datos con proveedores que nos prestan servicios necesarios para operar (por ejemplo, hosting, facturación electrónica, herramientas de soporte remoto), quienes están obligados contractualmente a proteger tu información y a usarla únicamente para los fines encomendados.
+              La información puede alojarse en proveedores de infraestructura que permiten operar el sitio y el panel de gestión. El equipo de ZIPEK limita el acceso a quienes atienden el servicio.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">5. Tus derechos</h2>
@@ -57,7 +59,7 @@ export default function PrivacidadPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">7. Cookies</h2>
             <p>
-              Nuestro sitio web puede utilizar cookies propias y/o de terceros para fines de analítica y funcionamiento. Puedes configurar tu navegador para rechazar cookies, aunque esto podría afectar la experiencia de navegación.
+              La analítica de visitas de Vercel solo se activa si la aceptas en el aviso del sitio. Si la rechazas, no se carga. Puedes cambiar esa decisión desde “Preferencias de analítica” en el pie de página. Guardamos tu elección en el almacenamiento local del navegador.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">8. Cambios a esta política</h2>

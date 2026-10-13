@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { siteConfig, features } from "@/config/site";
 import FadeIn from "@/components/layout/FadeIn";
+import { notFound } from "next/navigation";
 
 export default function LoginPage() {
-  if (!features.enableClientPortal) return null;
+  if (!features.enableClientPortal) notFound();
 
   return (
     <main className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">

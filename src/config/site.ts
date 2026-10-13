@@ -14,7 +14,7 @@ export const siteConfig = {
   domain: "zipek.cl",
   url: "https://zipek.cl",
   description:
-    "Soporte informático legal, claro y cercano para hogares y pymes. Equipos funcionando, seguros y con software legal.",
+    "Soporte informático para hogares y pymes en Quillota: diagnóstico claro, precio acordado antes de empezar y alternativas de software legales.",
   contact: {
     email: "contacto@zipek.cl",
     phone: "+56 9 5764 2162",
@@ -38,7 +38,7 @@ export const siteConfig = {
 export const features = {
   enablePortfolio: false,
   enableTestimonials: false,
-  enableFAQ: false,
+  enableFAQ: true,
   enableTechStack: false,
   enableWhatsApp: true,
   enableAnimations: true,
@@ -57,6 +57,7 @@ export const navLinks = [
   { title: "Inicio", href: "/#inicio" },
   { title: "Servicios", href: "/#servicios" },
   ...(features.enablePricing ? [{ title: "Planes", href: "/#planes" }] : []),
+  { title: "Seguimiento", href: "/seguimiento" },
   { title: "Contacto", href: "/#contacto" },
 ];
 
@@ -179,24 +180,28 @@ export const testimonialsData = [
 
 export const faqData = [
   {
-    question: "¿Cuánto tiempo toma desarrollar una solución a medida?",
-    answer: "Depende de la complejidad. Una Landing Page puede tomar de 1 a 2 semanas, mientras que un sistema complejo (E-commerce o Dashboard) entre 1 a 3 meses. Hacemos entregas continuas para que veas avances desde la primera semana."
+    question: "¿La revisión o visita tiene un costo?",
+    answer: "Puede depender del problema, la modalidad de atención y la ubicación. Consúltanos antes de coordinar; te informaremos si hay un costo de revisión o visita antes de que aceptes el servicio."
   },
   {
-    question: "¿Tienen soporte técnico después del lanzamiento?",
-    answer: "Sí, todos nuestros desarrollos incluyen un periodo de garantía. Además, ofrecemos planes de mantenimiento mensual para asegurar que tu software esté siempre actualizado y funcionando al 100%."
+    question: "¿Me dicen el precio antes de reparar el equipo?",
+    answer: "Sí. Primero revisamos el problema y te explicamos el trabajo recomendado y su precio. No hacemos trabajos adicionales sin consultarte y recibir tu autorización."
   },
   {
-    question: "¿Cuáles son las formas de pago?",
-    answer: "Trabajamos con hitos de proyecto. Usualmente un porcentaje al inicio, otro al revisar el prototipo, y el saldo al momento de salir a producción. Aceptamos transferencias y tarjetas."
+    question: "¿Qué pasa con mis archivos?",
+    answer: "Antes de intervenir, conversamos contigo sobre el respaldo. Si decides no hacerlo, dejamos constancia de esa decisión y del riesgo de pérdida de datos."
   },
   {
-    question: "¿Ustedes se encargan del hosting y dominios?",
-    answer: "Sí, ofrecemos el servicio de despliegue en la nube (AWS, Vercel, etc.) y te asesoramos con la compra y configuración de tu dominio."
+    question: "¿Instalan programas sin licencia?",
+    answer: "No instalamos ni activamos software sin licencia. Podemos revisar alternativas legales y gratuitas, como LibreOffice o Linux, según lo que necesites."
   },
   {
-    question: "¿Tienen políticas de garantía (SERNAC) y contratos de confidencialidad?",
-    answer: "Cumplimos estrictamente con las normativas chilenas. Todo proyecto va respaldado por un Contrato de Desarrollo y Acuerdos de Confidencialidad (NDA). Además, ofrecemos garantía técnica acorde a los derechos del consumidor, asegurando que el software entregado cumpla exactamente con lo especificado."
+    question: "¿Atienden negocios con soporte mensual?",
+    answer: "Sí. Podemos cotizar una mensualidad para tu pyme. Antes de contratar, dejamos por escrito qué incluye, las exclusiones, las visitas y el tiempo de respuesta acordado."
+  },
+  {
+    question: "¿Hacen visitas fuera de Quillota o atención urgente?",
+    answer: "La disponibilidad depende de la ubicación y la agenda. Escríbenos antes para confirmar si podemos ir y cuál sería el costo. La atención urgente también está sujeta a disponibilidad y su recargo se informa antes de confirmar."
   }
 ];
 
@@ -235,22 +240,21 @@ export const methodologyData = [
 export const pricingData = [
   {
     title: "Hogar Seguro",
-    price: "A definir",
-    description: "Diagnóstico, limpieza, antivirus, respaldo y 1 capacitación.",
+    price: "Cotización previa",
+    description: "Atención puntual con tareas y precio definidos tras conocer el estado del equipo.",
     features: [
       "Diagnóstico inicial sin rodeos",
       "Limpieza y optimización del equipo",
       "Antivirus y seguridad básica",
-      "Respaldo de fotos, documentos y WhatsApp",
+      "Respaldo de archivos según acceso y estado del equipo",
       "1 sesión de capacitación personalizada",
     ],
-    recommended: false,
-    cta: "Agendar diagnóstico",
+    cta: "Consultar por este plan",
   },
   {
     title: "Puesta a Punto Legal",
-    price: "A definir",
-    description: "Formateo, sistema legal, programas libres, correo e impresora.",
+    price: "Cotización previa",
+    description: "Reinstalación según compatibilidad, licencias, respaldo y alcance acordado.",
     features: [
       "Formateo y reinstalación segura",
       "Windows con licencia o Linux",
@@ -258,16 +262,15 @@ export const pricingData = [
       "Configuración de correo e impresora",
       "Informe final y garantía del servicio",
     ],
-    recommended: true,
-    cta: "Solicitar soporte",
+    cta: "Consultar por este plan",
   },
 ];
 
 export const supportPricingData = [
   {
     title: "Pyme Tranquila",
-    price: "A definir",
-    description: "Mensualidad con soporte remoto, 1 a 2 visitas, respaldo y revisión de licencias.",
+    price: "Según alcance",
+    description: "Mensualidad según equipos, cobertura y tareas acordadas antes de contratar.",
     features: [
       "Soporte remoto mensual",
       "1 a 2 visitas programadas",
@@ -275,21 +278,18 @@ export const supportPricingData = [
       "Revisión de licencias y software",
       "Capacitación de usuarios y políticas",
     ],
-    recommended: true,
     cta: "Cotizar mensualidad",
   },
   {
     title: "Atención urgente",
-    price: "Recargo",
-    description: "Visita prioritaria sujeta a disponibilidad y tarifa de urgencia.",
+    price: "Recargo informado",
+    description: "Confirmamos disponibilidad y costo antes de aceptar la visita.",
     features: [
       "Prioridad de atención",
       "Visita según disponibilidad",
       "Cobertura adicional por urgencia",
-      "Respuesta rápida por WhatsApp",
       "Se agrega sobre la tarifa normal",
     ],
-    recommended: false,
     cta: "Solicitar prioridad",
   },
 ];

@@ -12,12 +12,12 @@ export default function TerminosPage() {
           
           <div className="space-y-6 text-gray-300">
             <p>
-              Estos Términos y Condiciones regulan el uso del sitio web y la relación comercial general entre <strong>{siteConfig.name} ("{siteConfig.shortName}")</strong> y quienes visitan el sitio o solicitan información sobre sus servicios. Los términos específicos de cada proyecto contratado se rigen adicionalmente por el contrato de prestación de servicios o de soporte firmado entre las partes, el cual prevalece sobre este documento en caso de conflicto.
+              Estos términos explican las condiciones generales para usar este sitio y solicitar soporte informático a <strong>{siteConfig.name} ({siteConfig.shortName})</strong>. Cada atención debe contar con un alcance y un precio informados antes de comenzar.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">1. Servicios ofrecidos</h2>
             <p>
-              {siteConfig.shortName} presta servicios de desarrollo de software a medida, diseño y desarrollo de sitios y landing pages, soporte técnico remoto, y consultoría en optimización tecnológica para pequeñas y medianas empresas. La información publicada en el sitio web tiene carácter referencial; el alcance, precio y condiciones definitivas de cada servicio se establecen en la cotización y contrato correspondientes.
+              {siteConfig.shortName} presta soporte informático para hogares y pymes: puesta a punto de equipos, respaldo de datos, seguridad, redes, impresoras, capacitación y mantenimiento preventivo. La disponibilidad y el alcance de cada trabajo se confirman antes de agendar.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">2. Uso del sitio web</h2>
@@ -35,7 +35,7 @@ export default function TerminosPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">4. Cotizaciones y contratación de servicios</h2>
             <p>
-              El envío de un formulario de contacto o la solicitud de una cotización no constituye, por sí solo, un contrato vinculante entre las partes. La relación contractual y las obligaciones de ambas partes nacen únicamente con la firma del contrato de prestación de servicios o de soporte correspondiente.
+              En cada atención se registra el trabajo autorizado y el precio acordado. Cualquier tarea adicional debe ser consultada y aprobada por el cliente antes de realizarse.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">5. Enlaces a sitios de terceros</h2>
