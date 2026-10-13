@@ -17,13 +17,13 @@ concurrency:
 jobs:
   validate:
     name: Validate and build container
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -45,22 +45,23 @@ jobs:
           --build-arg NEXT_PUBLIC_SITE_URL=https://zipek.cl
           --build-arg SITE_URL=https://zipek.cl
           --tag zipek-landing:ci
+          .
 
   deploy-production:
     name: Deploy to Vercel
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: production
     concurrency:
       group: deploy-production
       cancel-in-progress: false
     steps:
       - name: Check out repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
       - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm

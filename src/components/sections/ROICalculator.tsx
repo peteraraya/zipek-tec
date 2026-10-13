@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { TrendingUp, Clock, DollarSign } from "lucide-react";
 import { features } from "@/config/site";
-import FadeIn from "@/components/layout/FadeIn";
 
 export default function ROICalculator() {
   const [hours, setHours] = useState<number>(15);
