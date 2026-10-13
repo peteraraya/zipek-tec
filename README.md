@@ -136,24 +136,6 @@ La clave anon/publishable de Supabase es pública por diseño; nunca uses una
 clave `service_role` como argumento de build ni la incluyas en variables
 `NEXT_PUBLIC_*`. Las variables `.env` no se copian a la imagen Docker.
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone https://github.com/peteraraya/zipek-landing.git
-   cd zipek-landing
-   ```
-
-2. **Instalar dependencias**
-   ```bash
-   npm install
-   ```
-
-3. **Ejecutar el entorno de desarrollo**
-   ```bash
-   npm run dev
-   ```
-
-   El sitio estará disponible en [http://localhost:3000](http://localhost:3000).
-
 ## ⚙️ Configuración (Feature Flags)
 
 Puedes personalizar y activar/desactivar módulos de la Landing Page modificando el archivo `src/config/site.ts`:
@@ -189,46 +171,34 @@ La guía de arquitectura, esquema de datos, despliegue de Supabase y controles d
 
 ## 🚀 Despliegue y CI/CD
 
-La producción se despliega en [Vercel](https://vercel.com) mediante
-`.github/workflows/ci-cd.yml`:
+El flujo de ramas, revisión, ambientes y recuperación de producción está en
+[docs/branching-and-release.md](./docs/branching-and-release.md). El pipeline
+de GitHub Actions vive en `.github/workflows/ci-cd.yml` y usa Vercel como
+plataforma de despliegue:
 
-1. Los pull requests dirigidos a `main` y cada push a `main` instalan las
-   dependencias bloqueadas por `package-lock.json`, ejecutan ESLint y
-   TypeScript, y construyen la imagen Docker de producción con credenciales
-   ficticias de CI. La imagen no se publica.
-2. Solo después de que esas validaciones pasen en un push a `main` (o una
-   ejecución manual en `main`), el workflow obtiene la configuración de
-   producción con Vercel CLI, genera el build preconstruido y lo despliega.
-   Los pull requests no despliegan a producción.
-3. La imagen Docker usa una compilación multi-stage: las dependencias de
-   desarrollo y herramientas de compilación quedan fuera de la imagen final,
-   que contiene únicamente el servidor standalone, los recursos estáticos y
-   Node.js como usuario no privilegiado.
+- Pull requests hacia `develop` o `main`: lint, TypeScript y build de la imagen Docker; nunca despliega.
+- Merge/push a `develop`: valida y luego publica un deployment Preview de Vercel.
+- Merge/push a `main`: valida y luego publica a Production; puede requerir aprobación del environment `production`.
+- Ejecución manual: la rama elegida decide el ambiente; `develop` publica Preview y `main` publica Production.
 
-### Configuración inicial del pipeline
+Configura los environments `staging` y `production` en **GitHub → Settings →
+Environments**. En cada uno crea los secrets `VERCEL_TOKEN`,
+`VERCEL_ORG_ID` y `VERCEL_PROJECT_ID`. En Vercel, carga las variables de
+aplicación en los entornos **Preview** y **Production**, según corresponda:
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`NEXT_PUBLIC_SITE_URL`, `SITE_URL` y, para envío real de correo,
+`RESEND_API_KEY`. Vercel CLI obtiene los valores durante `vercel pull`; no los
+guardes en el repositorio. Habilita revisores requeridos para `production` y
+desactiva despliegues automáticos duplicados desde la integración Git de
+Vercel si Actions será el único responsable de publicar.
 
-1. En Vercel, importa el repositorio y configura en el entorno **Production**
-   las variables necesarias para la aplicación:
-   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-   `NEXT_PUBLIC_SITE_URL`, `SITE_URL` y, si se habilita el envío de correo,
-   `RESEND_API_KEY`. Vercel CLI las descarga durante `vercel pull`; no las
-   escribas en el workflow ni en el repositorio.
-2. Crea el environment `production` en **GitHub → Settings → Environments**.
-   Allí agrega estos *environment secrets*:
-   - `VERCEL_TOKEN`: token de despliegue de Vercel.
-   - `VERCEL_ORG_ID`: ID del equipo/cuenta de Vercel.
-   - `VERCEL_PROJECT_ID`: ID del proyecto Vercel conectado a este sitio.
-3. Si quieres aprobación antes de producción, habilita revisores requeridos
-   para el environment `production`. Evita conectar un segundo despliegue
-   automático desde Vercel para no duplicar los despliegues disparados por
-   GitHub Actions.
-4. Fusiona un pull request en `main`. El despliegue corre después de que
-   `validate` finalice correctamente. También puedes iniciarlo manualmente
-   con **Actions → CI/CD → Run workflow**, seleccionando `main`.
+El build nativo de Vercel usa la salida normal de Next.js. La opción standalone
+solo se activa en la etapa Docker mediante `NEXT_OUTPUT_STANDALONE=1`; esto
+evita mezclar el empaquetado del contenedor con el adaptador nativo de Vercel.
 
-`npm run build` ejecuta `postbuild`, que genera `sitemap.xml` y `robots.txt`.
-Vercel realiza su propia optimización y publicación; el Dockerfile sirve para
-desarrollo local y para construir/ejecutar la imagen autónoma fuera de Vercel.
+Las imágenes Docker se construyen como validación y para ejecución externa;
+la publicación del sitio sigue usando el build nativo de Vercel. `npm run build`
+ejecuta `postbuild`, que genera el sitemap y `robots.txt`.
 
 ---
 
