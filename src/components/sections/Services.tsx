@@ -1,5 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Check,
+  ChevronDown,
+  ClipboardCheck,
+  HardDrive,
+  Laptop,
+  ListChecks,
+  PackageCheck,
+  ShieldCheck,
+} from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 const servicesForHome = [
@@ -33,6 +44,7 @@ const complementaryGroups = [
   {
     title: "Equipos",
     summary: "Revisión, configuración y puesta en marcha",
+    icon: Laptop,
     services: [
       {
         title: "Revisión preventiva",
@@ -55,6 +67,7 @@ const complementaryGroups = [
   {
     title: "Datos",
     summary: "Respaldos, recuperación y migración",
+    icon: HardDrive,
     services: [
       {
         title: "Respaldo y recuperación",
@@ -77,6 +90,7 @@ const complementaryGroups = [
   {
     title: "Seguridad digital",
     summary: "Prevención y configuración segura",
+    icon: ShieldCheck,
     services: [
       {
         title: "Seguridad digital cotidiana",
@@ -91,6 +105,7 @@ const complementaryGroups = [
   {
     title: "Pymes y capacitación",
     summary: "Inventario, soporte periódico y talleres",
+    icon: Building2,
     services: [
       {
         title: "Inventario y licencias",
@@ -120,7 +135,34 @@ const complementaryGroups = [
   },
 ];
 
-const complementaryServices = complementaryGroups.flatMap((group) => group.services);
+type ComplementaryService = (typeof complementaryGroups)[number]["services"][number];
+
+function ServiceScope({ service }: { service: ComplementaryService }) {
+  const scopeItems = [
+    { icon: ListChecks, label: "Puede incluir", description: service.includes },
+    { icon: ClipboardCheck, label: "Confirmamos antes", description: service.confirm },
+    { icon: PackageCheck, label: "Recibes", description: service.delivery },
+  ];
+
+  return (
+    <dl className="space-y-2 border-t border-white/10 py-3 text-xs leading-5 sm:text-sm">
+      {scopeItems.map(({ icon: Icon, label, description }, index) => (
+        <div key={label} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-2 rounded-lg border border-white/[0.06] bg-black/10 p-2.5 sm:grid-cols-[2rem_1.25rem_8.5rem_minmax(0,1fr)] sm:items-start">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-light/[0.08] text-[10px] font-semibold tabular-nums text-primary-light sm:h-7 sm:w-7">
+            0{index + 1}
+          </span>
+          <Icon className="col-start-1 row-start-2 mt-1 h-4 w-4 text-primary-light sm:col-start-2 sm:row-start-1 sm:mt-1.5" aria-hidden="true" />
+          <dt className="col-start-2 row-start-1 self-center font-semibold text-white sm:col-start-3 sm:self-start">
+            {label}
+          </dt>
+          <dd className="col-start-2 row-start-2 mt-1 text-gray-400 sm:col-start-4 sm:row-span-1 sm:row-start-1 sm:mt-0">
+            {description}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
 
 export default function Services() {
   return (
@@ -174,94 +216,79 @@ export default function Services() {
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-light">Más apoyo, a tu medida</p>
             <h3 className="mt-2 text-2xl font-semibold text-white sm:mt-3 sm:text-3xl">Servicios complementarios</h3>
             <p className="mt-2 text-sm leading-6 text-gray-400 sm:mt-3 sm:text-base sm:leading-7">
-              Elige una opción y revisa su alcance. Cotizamos cada caso y te aclaramos qué incluye y qué no antes de autorizar.
+              Revisa qué puede incluir cada servicio; definimos su alcance, costos y exclusiones antes de autorizar.
             </p>
           </div>
 
-          <div className="divide-y divide-white/10 border-y border-white/10 md:hidden">
-            {complementaryGroups.map((group) => (
-              <details key={group.title} className="group">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 marker:hidden">
-                  <span className="min-w-0">
-                    <span className="block font-semibold text-white">{group.title}</span>
-                    <span className="mt-0.5 block text-xs leading-5 text-gray-400">{group.summary}</span>
-                  </span>
-                  <span aria-hidden="true" className="shrink-0 text-xl text-primary-light transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <div className="space-y-2 pb-3">
-                  {group.services.map((service) => (
-                    <details key={service.title} className="group/service border border-white/[0.08] bg-white/[0.02] px-3">
-                      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 py-2 marker:hidden">
-                        <span className="min-w-0">
-                          <span className="block text-sm font-medium text-gray-100">{service.title}</span>
-                          <span className="mt-0.5 block text-xs leading-5 text-gray-400">{service.description}</span>
-                        </span>
-                        <span aria-hidden="true" className="shrink-0 text-lg text-primary-light transition-transform group-open/service:rotate-45">+</span>
-                      </summary>
-                      <dl className="space-y-3 border-t border-white/10 py-3 text-xs leading-5">
-                        <div>
-                          <dt className="font-semibold text-white">Puede incluir</dt>
-                          <dd className="mt-0.5 text-gray-400">{service.includes}</dd>
-                        </div>
-                        <div>
-                          <dt className="font-semibold text-white">Confirmamos antes</dt>
-                          <dd className="mt-0.5 text-gray-400">{service.confirm}</dd>
-                        </div>
-                        <div>
-                          <dt className="font-semibold text-white">Recibes</dt>
-                          <dd className="mt-0.5 text-gray-400">{service.delivery}</dd>
-                        </div>
-                      </dl>
-                      <Link
-                        href={`/consultas?tema=${encodeURIComponent(service.topic)}`}
-                        className="mb-3 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-light"
-                      >
-                        Consultar esta opción <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                      </Link>
-                    </details>
-                  ))}
-                </div>
-              </details>
-            ))}
+          <div className="space-y-3">
+            {complementaryGroups.map((group, index) => {
+              const Icon = group.icon;
+
+              return (
+                <details key={group.title} open={index === 0} className="group border border-white/[0.09] bg-white/[0.018]">
+                  <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 p-4 marker:hidden sm:px-5">
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-primary-light/20 bg-primary-light/[0.06] text-primary-light">
+                        <Icon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-semibold text-white">{group.title}</span>
+                        <span className="mt-0.5 block text-xs leading-5 text-gray-400">{group.summary}</span>
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-3">
+                      <span className="hidden text-xs text-gray-500 sm:inline">
+                        {group.services.length} {group.services.length === 1 ? "servicio" : "servicios"}
+                      </span>
+                      <ChevronDown className="h-5 w-5 text-primary-light transition-transform group-open:rotate-180" aria-hidden="true" />
+                    </span>
+                  </summary>
+
+                  <div className="grid gap-3 border-t border-white/[0.08] px-3 pb-3 pt-3 sm:grid-cols-2 sm:px-4 sm:pb-4">
+                    {group.services.map((service) => (
+                      <article key={service.title} className="border border-white/[0.08] bg-white/[0.02] p-4">
+                        <h4 className="font-semibold text-white">{service.title}</h4>
+                        <p className="mt-1.5 text-sm leading-5 text-gray-400">{service.description}</p>
+                        <details className="group/scope mt-3 border-t border-white/10 pt-2">
+                          <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-primary-light marker:hidden">
+                            Ver alcance en 3 pasos
+                            <ChevronDown className="h-4 w-4 transition-transform group-open/scope:rotate-180" aria-hidden="true" />
+                          </summary>
+                          <ServiceScope service={service} />
+                        </details>
+                        <Link
+                          href={`/consultas?tema=${encodeURIComponent(service.topic)}`}
+                          className="mt-2 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-light transition hover:text-white"
+                        >
+                          Consultar esta opción <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </article>
+                    ))}
+                  </div>
+                </details>
+              );
+            })}
           </div>
 
-          <div className="hidden gap-3 md:grid md:grid-cols-2">
-            {complementaryServices.map((service) => (
-              <article key={service.title} className="border border-white/[0.09] bg-white/[0.02] p-4 sm:p-5">
-                <h4 className="font-semibold text-white">{service.title}</h4>
-                <p className="mt-2 text-sm leading-6 text-gray-400">{service.description}</p>
-                <details className="group mt-4 border-t border-white/10 pt-3">
-                  <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-primary-light marker:hidden">
-                    Ver alcance orientativo
-                    <span aria-hidden="true" className="text-lg transition-transform group-open:rotate-45">+</span>
-                  </summary>
-                  <dl className="mt-3 space-y-3 text-sm leading-6">
-                    <div>
-                      <dt className="font-semibold text-white">Qué puede incluir</dt>
-                      <dd className="mt-1 text-gray-400">{service.includes}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold text-white">Qué confirmamos antes</dt>
-                      <dd className="mt-1 text-gray-400">{service.confirm}</dd>
-                    </div>
-                    <div>
-                      <dt className="font-semibold text-white">Qué recibes</dt>
-                      <dd className="mt-1 text-gray-400">{service.delivery}</dd>
-                    </div>
-                  </dl>
-                </details>
-                <Link
-                  href={`/consultas?tema=${encodeURIComponent(service.topic)}`}
-                  className="mt-3 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-light transition hover:text-white"
-                >
-                  Consultar esta opción <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </article>
-            ))}
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <aside className="border border-white/[0.08] bg-white/[0.02] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-light">Se confirma antes de autorizar</p>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {["Valores", "Disponibilidad", "Modalidad", "Costo de revisión", "Condiciones de garantía"].map((item) => (
+                  <li key={item} className="inline-flex min-h-8 items-center gap-1.5 border border-white/[0.08] px-2.5 text-xs text-gray-300">
+                    <Check className="h-3.5 w-3.5 text-primary-light" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </aside>
+            <aside className="border border-white/[0.08] bg-white/[0.02] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-light">Orientación sobre equipos</p>
+              <p className="mt-2 text-sm leading-6 text-gray-400">
+                La asesoría puede orientar sobre reparar, actualizar o reemplazar; no implica compra, reventa ni reacondicionamiento de hardware.
+              </p>
+            </aside>
           </div>
-          <p className="mt-4 text-xs leading-5 text-gray-500">
-            Valores, disponibilidad, modalidad, costo de revisión y condiciones de garantía se informan por caso antes de autorizar. La asesoría puede orientar sobre reparar, actualizar o reemplazar; no implica compra, reventa ni reacondicionamiento de hardware.
-          </p>
         </div>
       </div>
     </section>
