@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import DocumentEditor from "@/components/admin/DocumentEditor";
 import { getDocumentFieldValues, getDocumentTemplate } from "@/lib/admin/document-templates";
 import { getClients, getServiceOrders } from "@/lib/admin/queries";
+import { requireStaff } from "@/lib/admin/auth";
 
 export default async function NewServiceDocumentPage({
   params,
@@ -11,6 +12,7 @@ export default async function NewServiceDocumentPage({
   params: Promise<{ tipo: string }>;
   searchParams: Promise<{ cliente?: string; orden?: string }>;
 }) {
+  await requireStaff("documents.manage");
   const [{ tipo }, query] = await Promise.all([params, searchParams]);
   const template = getDocumentTemplate(tipo);
   if (!template) notFound();

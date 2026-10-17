@@ -187,7 +187,9 @@ Environments**. En cada uno crea los secrets `VERCEL_TOKEN`,
 aplicación en los entornos **Preview** y **Production**, según corresponda:
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
 `NEXT_PUBLIC_SITE_URL`, `SITE_URL` y, para envío real de correo,
-`RESEND_API_KEY`. Vercel CLI obtiene los valores durante `vercel pull`; no los
+`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `SUPABASE_SERVICE_ROLE_KEY` y
+`CRON_SECRET`. Las dos últimas son variables privadas de runtime: no se pasan
+como argumentos de build ni se exponen al navegador. Vercel CLI obtiene los valores durante `vercel pull`; no los
 guardes en el repositorio. Habilita revisores requeridos para `production` y
 desactiva despliegues automáticos duplicados desde la integración Git de
 Vercel si Actions será el único responsable de publicar.

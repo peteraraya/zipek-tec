@@ -2,6 +2,7 @@ import Link from "next/link";
 import AdminSearchTable from "@/components/admin/AdminSearchTable";
 import { documentTemplates } from "@/lib/admin/document-templates";
 import { loadInitialAdminList } from "@/lib/admin/search";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function ServiceDocumentsPage({
   searchParams,
@@ -9,6 +10,7 @@ export default async function ServiceDocumentsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const query = await searchParams;
+  const { profile } = await requireStaff("documents.read");
   const list = await loadInitialAdminList("documents", query);
   const context = new URLSearchParams();
   const clientId = typeof query.cliente === "string" ? query.cliente : "";
@@ -59,7 +61,7 @@ export default async function ServiceDocumentsPage({
         ]}
       />
 
-      <section className="mt-10">
+      {hasAdminPermission(profile.role, "documents.manage") && <section className="mt-10">
         <h2 className="text-xl font-semibold text-white">Crear documento</h2>
         <p className="mt-1 text-sm text-gray-400">Elige una plantilla para iniciar un nuevo borrador.</p>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -76,7 +78,7 @@ export default async function ServiceDocumentsPage({
             </article>
           ))}
         </div>
-      </section>
+      </section>}
     </section>
   );
 }

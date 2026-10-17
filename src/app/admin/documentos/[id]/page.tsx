@@ -5,6 +5,7 @@ import PrintButton from "@/components/admin/PrintButton";
 import { siteConfig } from "@/config/site";
 import { AdminRecordNotFoundError, getServiceDocument, getServiceOrder } from "@/lib/admin/queries";
 import { getDocumentTemplate } from "@/lib/admin/document-templates";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function ServiceDocumentDetailPage({
   params,
@@ -12,6 +13,7 @@ export default async function ServiceDocumentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { profile } = await requireStaff("documents.read");
   let record;
   try {
     record = await getServiceDocument(id);
@@ -31,12 +33,12 @@ export default async function ServiceDocumentDetailPage({
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-4">
         <Link href="/admin/documentos" className="text-sm text-gray-400 hover:text-white">← Documentos</Link>
         <div className="flex flex-wrap gap-3">
-          <Link
+          {hasAdminPermission(profile.role, "documents.manage") && <Link
             href={`/admin/documentos/${id}/editar`}
             className="rounded-lg border border-white/10 px-4 py-3 text-sm text-gray-200 hover:bg-white/5"
           >
             Editar documento
-          </Link>
+          </Link>}
           <a
             href={`/admin/documentos/${id}/pdf`}
             className="rounded-lg border border-white/10 px-4 py-3 text-sm text-gray-200 hover:bg-white/5"
@@ -59,10 +61,10 @@ export default async function ServiceDocumentDetailPage({
               : "Aún no se ha enviado por correo."}
           </p>
         </div>
-        <DocumentEmailForm
+        {hasAdminPermission(profile.role, "documents.manage") && <DocumentEmailForm
           documentId={id}
           defaultEmail={record.client.email ?? ""}
-        />
+        />}
       </div>
 
       <article className="print-only-document print-document rounded-xl bg-white p-8 text-gray-900 shadow-xl print:rounded-none print:p-10 print:shadow-none">

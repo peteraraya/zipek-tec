@@ -9,7 +9,7 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  await requireStaff();
+  await requireStaff("documents.read");
   const { id } = await params;
 
   let record;
@@ -27,7 +27,7 @@ export async function GET(
 
   let orderNumber: string | undefined;
   if (record.document.order_id) {
-    const { supabase } = await requireStaff();
+    const { supabase } = await requireStaff("documents.read");
     const { data: order, error } = await supabase
       .from("service_orders")
       .select("order_number")

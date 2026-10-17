@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AdminSearchTable from "@/components/admin/AdminSearchTable";
 import { loadInitialAdminList } from "@/lib/admin/search";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function AdminClientsPage({
   searchParams,
@@ -8,6 +9,7 @@ export default async function AdminClientsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
+  const { profile } = await requireStaff("clients.read");
   const list = await loadInitialAdminList("clients", params);
   const initialFilters = { archived: "active", ...list.filters };
 
@@ -19,7 +21,9 @@ export default async function AdminClientsPage({
           <h1 className="mt-2 text-3xl font-bold text-white">Clientes</h1>
           <p className="mt-2 text-gray-400">Busca por nombre, RUT, teléfono o correo y filtra el directorio.</p>
         </div>
-        <Link href="/admin/clientes/nuevo" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Registrar cliente</Link>
+        {hasAdminPermission(profile.role, "clients.manage") && (
+          <Link href="/admin/clientes/nuevo" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Registrar cliente</Link>
+        )}
       </div>
 
       {params.created && <p className="mt-5 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-200">Cliente registrado.</p>}

@@ -18,6 +18,22 @@ export type DocumentEmailState = {
   success?: string;
 };
 
+async function logDocumentDelivery(
+  supabase: Awaited<ReturnType<typeof requireStaff>>["supabase"],
+  actorId: string,
+  documentId: string,
+  result: "sent" | "failed",
+  errorCode: string | null,
+) {
+  const { error } = await supabase.from("admin_email_delivery_events").insert({
+    actor_id: actorId,
+    document_id: documentId,
+    result,
+    error_code: errorCode,
+  });
+  if (error) throw new Error(`No se pudo registrar el resultado del correo: ${error.message}`);
+}
+
 const uuidSchema = z.string().uuid("El identificador no es válido.");
 const emailSchema = z.string().trim().email("Ingresa un correo electrónico válido.").max(254);
 
@@ -65,7 +81,7 @@ export async function saveServiceDocumentAction(
   _state: DocumentSaveState,
   formData: FormData,
 ): Promise<DocumentSaveState> {
-  const { supabase, user } = await requireStaff();
+  const { supabase, user } = await requireStaff("documents.manage");
   const templateId = String(formData.get("template_id") ?? "");
   const template = getDocumentTemplate(templateId);
   if (!template) return { error: "Selecciona un tipo de documento válido." };
@@ -154,17 +170,11 @@ export async function sendServiceDocumentEmailAction(
   _state: DocumentEmailState,
   formData: FormData,
 ): Promise<DocumentEmailState> {
-  const { supabase } = await requireStaff();
+  const { supabase, user } = await requireStaff("documents.manage");
   const documentId = String(formData.get("document_id") ?? "");
   const recipientResult = emailSchema.safeParse(formData.get("recipient"));
   if (!uuidSchema.safeParse(documentId).success) return { error: "El documento seleccionado no es válido." };
   if (!recipientResult.success) return { error: "Ingresa un correo electrónico válido." };
-
-  const apiKey = process.env.RESEND_API_KEY;
-  const sender = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !sender) {
-    return { error: "Configura RESEND_API_KEY y RESEND_FROM_EMAIL con un remitente verificado para habilitar el envío." };
-  }
 
   const { data, error } = await supabase
     .from("service_documents")
@@ -173,6 +183,13 @@ export async function sendServiceDocumentEmailAction(
     .single();
   if (error) throw new Error(`No se pudo cargar el documento para enviarlo: ${error.message}`);
   const document = data as ServiceDocumentRecord;
+
+  const apiKey = process.env.RESEND_API_KEY;
+  const sender = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !sender) {
+    await logDocumentDelivery(supabase, user.id, documentId, "failed", "email_not_configured");
+    return { error: "Configura RESEND_API_KEY y RESEND_FROM_EMAIL con un remitente verificado para habilitar el envío." };
+  }
 
   const { data: client, error: clientError } = await supabase
     .from("clients")
@@ -205,11 +222,17 @@ export async function sendServiceDocumentEmailAction(
   try {
     pdf = await createServiceDocumentPdf(document, client.full_name, orderNumber);
   } catch (error) {
-    console.error("No se pudo generar el PDF del documento", error);
+    console.error(JSON.stringify({
+      event: "service_document_pdf_failed",
+      document_id: documentId,
+      error_type: error instanceof Error ? error.name : "UnknownError",
+    }));
+    await logDocumentDelivery(supabase, user.id, documentId, "failed", "pdf_generation_error");
     return { error: "No se pudo generar el PDF. El documento no fue enviado." };
   }
 
   const resend = new Resend(apiKey);
+  let sendFailed = false;
   try {
     const { error: emailError } = await resend.emails.send({
       from: sender,
@@ -222,12 +245,15 @@ export async function sendServiceDocumentEmailAction(
       }],
     });
     if (emailError) {
-      console.error("No se pudo enviar el documento por correo", emailError);
-      return { error: "El proveedor de correo no pudo enviar el documento. No se marcó como enviado." };
+      sendFailed = true;
     }
-  } catch (error) {
-    console.error("Falló el envío de correo con PDF adjunto", error);
-    return { error: "No se pudo enviar el correo. El documento no se marcó como enviado." };
+  } catch {
+    sendFailed = true;
+  }
+  if (sendFailed) {
+    console.error(JSON.stringify({ event: "service_document_email_failed", document_id: documentId }));
+    await logDocumentDelivery(supabase, user.id, documentId, "failed", "provider_error");
+    return { error: "No se pudo enviar el documento. No se marcó como enviado." };
   }
 
   const { error: updateError } = await supabase
@@ -239,10 +265,13 @@ export async function sendServiceDocumentEmailAction(
     })
     .eq("id", documentId);
   if (updateError) {
-    console.error("El correo del documento fue enviado, pero no se pudo actualizar su registro", updateError);
+    await logDocumentDelivery(supabase, user.id, documentId, "sent", null);
+    console.error(JSON.stringify({ event: "service_document_status_update_failed", document_id: documentId }));
     return { error: "El correo se envió, pero no se pudo actualizar el historial del documento. Revisa el registro antes de reenviarlo." };
   }
 
+  await logDocumentDelivery(supabase, user.id, documentId, "sent", null);
+  console.info(JSON.stringify({ event: "service_document_email_sent", document_id: documentId }));
   revalidatePath("/admin/documentos");
   revalidatePath(`/admin/documentos/${documentId}`);
   return { success: `Documento enviado a ${recipientResult.data}.` };

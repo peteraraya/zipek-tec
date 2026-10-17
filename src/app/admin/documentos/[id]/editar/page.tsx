@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import DocumentEditor from "@/components/admin/DocumentEditor";
 import { AdminRecordNotFoundError, getClients, getServiceDocument, getServiceOrders } from "@/lib/admin/queries";
 import { getDocumentFieldValues, getDocumentTemplate } from "@/lib/admin/document-templates";
+import { requireStaff } from "@/lib/admin/auth";
 
 export default async function EditServiceDocumentPage({
   params,
@@ -10,6 +11,7 @@ export default async function EditServiceDocumentPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  await requireStaff("documents.manage");
   let record;
   try {
     record = await getServiceDocument(id);

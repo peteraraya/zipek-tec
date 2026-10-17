@@ -4,6 +4,7 @@ import { archiveClientAction, updateClientAction } from "@/app/actions/admin";
 import { AdminField, AdminInput, AdminTextarea, adminButtonClass } from "@/components/admin/AdminField";
 import { ClientLiveValidation } from "@/components/admin/LiveValidation";
 import { AdminRecordNotFoundError, getClient } from "@/lib/admin/queries";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function EditClientPage({
   params,
@@ -13,6 +14,7 @@ export default async function EditClientPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
+  const { profile } = await requireStaff("clients.read");
   let client;
   try {
     client = await getClient(id);
@@ -30,10 +32,10 @@ export default async function EditClientPage({
           <h1 className="mt-2 text-3xl font-bold text-white">{client.full_name}</h1>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link href={`/admin/documentos?cliente=${client.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">
+          {hasAdminPermission(profile.role, "documents.manage") && <Link href={`/admin/documentos?cliente=${client.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">
             Generar documento
-          </Link>
-          {!client.archived_at && (
+          </Link>}
+          {hasAdminPermission(profile.role, "clients.manage") && !client.archived_at && (
             <form action={archiveClientAction}>
               <input type="hidden" name="id" value={client.id} />
               <button className="rounded-lg border border-red-400/20 px-4 py-3 text-sm text-red-200 hover:bg-red-500/10" type="submit">Archivar cliente</button>
@@ -43,7 +45,7 @@ export default async function EditClientPage({
       </div>
       {query.error && <p role="alert" className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{query.error}</p>}
       {client.archived_at && <p className="mt-5 rounded-lg bg-amber-500/10 p-3 text-sm text-amber-100">Cliente archivado.</p>}
-      <ClientLiveValidation action={updateClientAction} className="mt-8 space-y-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+      {hasAdminPermission(profile.role, "clients.manage") && <ClientLiveValidation action={updateClientAction} className="mt-8 space-y-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <input type="hidden" name="id" value={client.id} />
         <AdminField label="Nombre o razón social"><AdminInput name="full_name" defaultValue={client.full_name} required minLength={2} maxLength={160} /></AdminField>
         <div className="grid gap-5 md:grid-cols-2">
@@ -54,7 +56,7 @@ export default async function EditClientPage({
         <AdminField label="Dirección (opcional)"><AdminInput name="address" defaultValue={client.address ?? ""} maxLength={300} /></AdminField>
         <AdminField label="Notas internas"><AdminTextarea name="notes" rows={4} defaultValue={client.notes ?? ""} maxLength={2000} /></AdminField>
         <button className={adminButtonClass} type="submit">Guardar cambios</button>
-      </ClientLiveValidation>
+      </ClientLiveValidation>}
     </section>
   );
 }

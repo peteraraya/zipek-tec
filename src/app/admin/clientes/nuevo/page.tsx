@@ -2,8 +2,10 @@ import Link from "next/link";
 import { createClientAction } from "@/app/actions/admin";
 import { AdminField, AdminInput, AdminTextarea, adminButtonClass } from "@/components/admin/AdminField";
 import { ClientLiveValidation } from "@/components/admin/LiveValidation";
+import { requireStaff } from "@/lib/admin/auth";
 
-export default function NewClientPage() {
+export default async function NewClientPage() {
+  await requireStaff("clients.manage");
   return (
     <section className="mx-auto max-w-3xl">
       <Link href="/admin/clientes" className="text-sm text-gray-400 hover:text-white">← Clientes</Link>

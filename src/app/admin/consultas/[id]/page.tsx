@@ -7,6 +7,7 @@ import {
   serviceInquirySourceLabels,
   serviceInquiryStatusLabels,
 } from "@/lib/admin/types";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 function getWhatsAppUrl(phone: string) {
   let number = phone.replace(/\D/g, "");
@@ -21,6 +22,8 @@ export default async function ServiceInquiryDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { profile } = await requireStaff("inquiries.read");
+  const mayManageInquiries = hasAdminPermission(profile.role, "inquiries.manage");
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   let data;
@@ -87,12 +90,12 @@ export default async function ServiceInquiryDetailPage({
                 {inquiry.contact_name && <p>{inquiry.contact_name}</p>}
                 {inquiry.contact_phone && <p>{inquiry.contact_phone}</p>}
                 {inquiry.contact_email && <p className="break-all">{inquiry.contact_email}</p>}
-                {whatsappUrl && (
+                {mayManageInquiries && whatsappUrl && (
                   <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex rounded-lg bg-[#25D366] px-4 py-2 font-semibold text-white hover:bg-[#20bd5a]">
                     Responder por WhatsApp
                   </a>
                 )}
-                {inquiry.contact_email && (
+                {mayManageInquiries && inquiry.contact_email && (
                   <a href={`mailto:${inquiry.contact_email}`} className="mt-3 inline-flex rounded-lg border border-white/10 px-4 py-2 font-semibold text-gray-200 hover:bg-white/5">
                     Responder por correo
                   </a>
@@ -103,15 +106,17 @@ export default async function ServiceInquiryDetailPage({
             )}
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="mb-4 font-semibold text-white">Actualizar estado</h2>
-            <InquiryStatusForm inquiry={inquiry} />
-          </section>
+          {mayManageInquiries && <>
+            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <h2 className="mb-4 font-semibold text-white">Actualizar estado</h2>
+              <InquiryStatusForm inquiry={inquiry} />
+            </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="mb-4 font-semibold text-white">Agregar seguimiento</h2>
-            <InquiryNoteForm inquiryId={inquiry.id} />
-          </section>
+            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <h2 className="mb-4 font-semibold text-white">Agregar seguimiento</h2>
+              <InquiryNoteForm inquiryId={inquiry.id} />
+            </section>
+          </>}
         </aside>
       </div>
     </section>

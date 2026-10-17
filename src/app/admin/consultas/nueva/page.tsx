@@ -1,7 +1,9 @@
 import Link from "next/link";
 import InquiryCreateForm from "@/components/admin/InquiryCreateForm";
+import { requireStaff } from "@/lib/admin/auth";
 
-export default function NewWhatsAppInquiryPage() {
+export default async function NewWhatsAppInquiryPage() {
+  await requireStaff("inquiries.manage");
   return (
     <section className="mx-auto max-w-3xl">
       <Link href="/admin/consultas" className="text-sm text-gray-400 hover:text-white">← Volver a consultas</Link>

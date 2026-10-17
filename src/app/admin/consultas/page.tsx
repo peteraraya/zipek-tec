@@ -5,12 +5,14 @@ import {
   serviceInquirySourceLabels,
   serviceInquiryStatusLabels,
 } from "@/lib/admin/types";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function ServiceInquiriesPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { profile } = await requireStaff("inquiries.read");
   const list = await loadInitialAdminList("inquiries", await searchParams);
 
   return (
@@ -21,9 +23,9 @@ export default async function ServiceInquiriesPage({
           <h1 className="mt-2 text-3xl font-bold text-white">Consultas</h1>
           <p className="mt-2 text-gray-400">Busca por referencia, tema, mensaje o contacto autorizado.</p>
         </div>
-        <Link href="/admin/consultas/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">
+        {hasAdminPermission(profile.role, "inquiries.manage") && <Link href="/admin/consultas/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">
           Registrar WhatsApp
-        </Link>
+        </Link>}
       </div>
       {list.error && <p role="alert" className="mt-5 rounded-lg bg-amber-500/10 p-3 text-sm text-amber-100">{list.error}</p>}
       <AdminSearchTable

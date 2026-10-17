@@ -6,6 +6,7 @@ import TaskLogForm from "@/components/admin/TaskLogForm";
 import TrackingLinkManager from "@/components/admin/TrackingLinkManager";
 import { serviceStatusLabels } from "@/lib/admin/types";
 import { AdminRecordNotFoundError, getServiceOrder } from "@/lib/admin/queries";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 export default async function ServiceOrderDetailPage({
   params,
@@ -15,6 +16,8 @@ export default async function ServiceOrderDetailPage({
   searchParams: Promise<{ reportUpdated?: string; error?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
+  const { profile } = await requireStaff("orders.read");
+  const mayManageOrders = hasAdminPermission(profile.role, "orders.manage");
   let record;
   try {
     record = await getServiceOrder(id);
@@ -35,16 +38,18 @@ export default async function ServiceOrderDetailPage({
         </div>
         <div className="flex flex-wrap gap-3">
           <Link href={`/admin/ordenes/${id}/documentos`} className="rounded-lg border border-white/10 px-4 py-3 text-sm text-gray-200 hover:bg-white/5">Orden e informe imprimibles</Link>
-          <Link href={`/admin/documentos?cliente=${client.id}&orden=${order.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Generar documento</Link>
+          {hasAdminPermission(profile.role, "documents.manage") && (
+            <Link href={`/admin/documentos?cliente=${client.id}&orden=${order.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Generar documento</Link>
+          )}
         </div>
       </div>
 
       {query.error && <p role="alert" className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{query.error}</p>}
       {query.reportUpdated && <p className="mt-5 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-200">Informe guardado en el historial.</p>}
 
-      <div className="mt-8">
+      {mayManageOrders && <div className="mt-8">
         <TrackingLinkManager orderId={order.id} orderNumber={order.order_number} />
-      </div>
+      </div>}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
@@ -56,9 +61,9 @@ export default async function ServiceOrderDetailPage({
               </div>
               {order.priority === "urgent" && <span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-200">Atención urgente</span>}
             </div>
-            <div className="mt-6 border-t border-white/10 pt-5">
+            {mayManageOrders && <div className="mt-6 border-t border-white/10 pt-5">
               <StatusUpdateForm order={order} />
-            </div>
+            </div>}
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
@@ -75,13 +80,13 @@ export default async function ServiceOrderDetailPage({
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
             <h2 className="text-lg font-semibold text-white">Informe de servicio · Anexo B</h2>
-            <p className="mt-1 text-sm text-gray-400">Los cambios del informe se registran en el historial interno.</p>
-            <div className="mt-5"><ReportEditor order={order} /></div>
+            {mayManageOrders && <p className="mt-1 text-sm text-gray-400">Los cambios del informe se registran en el historial interno.</p>}
+            {mayManageOrders && <div className="mt-5"><ReportEditor order={order} /></div>}
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
             <h2 className="text-lg font-semibold text-white">Registro de trabajos realizados</h2>
-            <div className="mt-5"><TaskLogForm orderId={order.id} /></div>
+            {mayManageOrders && <div className="mt-5"><TaskLogForm orderId={order.id} /></div>}
             <ul className="mt-6 divide-y divide-white/5">
               {tasks.map((task) => (
                 <li key={task.id} className="flex items-start justify-between gap-4 py-3 text-sm">

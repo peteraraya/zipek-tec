@@ -2,6 +2,7 @@ import Link from "next/link";
 import AdminSearchTable from "@/components/admin/AdminSearchTable";
 import { loadInitialAdminList } from "@/lib/admin/search";
 import { serviceStatusLabels } from "@/lib/admin/types";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
 const priorityLabels = { standard: "Normal", urgent: "Urgente" };
 
@@ -11,6 +12,7 @@ export default async function ServiceOrdersPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
+  const { profile } = await requireStaff("orders.read");
   const list = await loadInitialAdminList("orders", params);
 
   return (
@@ -21,7 +23,9 @@ export default async function ServiceOrdersPage({
           <h1 className="mt-2 text-3xl font-bold text-white">Órdenes de servicio</h1>
           <p className="mt-2 text-gray-400">Busca órdenes, clientes o equipos y combina estado, prioridad y fechas.</p>
         </div>
-        <Link href="/admin/ordenes/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Crear orden</Link>
+        {hasAdminPermission(profile.role, "orders.manage") && (
+          <Link href="/admin/ordenes/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Crear orden</Link>
+        )}
       </div>
       {list.error && <p role="alert" className="mt-5 rounded-lg bg-amber-500/10 p-3 text-sm text-amber-100">{list.error}</p>}
       <AdminSearchTable
