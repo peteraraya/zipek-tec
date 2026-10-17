@@ -6,6 +6,7 @@
 - **Identidad:** Supabase Auth con correo y contraseña. No hay registro público. El acceso requiere un registro activo en `admin_profiles`.
 - **Persistencia:** PostgreSQL administrado por Supabase. Las tablas privadas tienen RLS y las operaciones críticas pasan por funciones SQL que validan el perfil activo.
 - **Capa de acceso:** Server Components y Server Actions usan el cliente SSR autenticado; `src/proxy.ts` actualiza las cookies de sesión. No se usa la clave `service_role`.
+- **Búsqueda del panel:** listados acotados por cursor desde Route Handlers privados; los filtros se conservan en la URL y PostgreSQL ejecuta búsqueda y filtrado bajo RLS.
 - **Seguimiento público:** la página comparte una clave aleatoria de 256 bits en el fragmento del enlace. Solo se almacena su SHA-256. El visitante envía la clave al backend y recibe los campos públicos mínimos. Se emite un broadcast privado de Supabase Realtime para la clave correspondiente y se conserva una consulta de respaldo cada 15 segundos.
 - **Renovación de enlace:** desde el detalle de una orden, personal activo puede generar y copiar un nuevo enlace privado. La operación sustituye el hash vigente en `service_tracking_tokens`; el enlace anterior queda invalidado. El valor nuevo solo se muestra tras generarlo y no se puede recuperar desde la base de datos.
 - **Consultas:** el formulario web permite elegir entre enviar una consulta anónima (sin respuesta posible) o solicitar respuesta proporcionando teléfono o correo y autorizando expresamente su uso para ese fin. El código de referencia no permite consultar el contenido ni el estado de una consulta; sirve para retomarla manualmente por WhatsApp. Las conversaciones de WhatsApp se registran manualmente desde el panel; no hay sincronización automática con Meta/WhatsApp Business.
@@ -34,7 +35,7 @@ Las funciones transaccionales `create_service_order`, `update_service_order_stat
 1. Crear un proyecto Supabase y configurar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` en `.env.local` (ver `.env.example`). Configurar `NEXT_PUBLIC_SITE_URL` con el dominio de producción.
 2. Aplicar la migración SQL completa desde Supabase CLI (`supabase db push`) o el editor SQL del proyecto. No aplicar fragmentos: crea tipos, tablas, funciones, triggers y políticas de seguridad relacionados.
    Aplicar también `supabase/migrations/20261012000000_service_inquiries.sql` y `supabase/migrations/20261013000000_service_documents.sql` para habilitar las consultas y el módulo de documentos.
-   Aplicar también `supabase/migrations/20261014000000_rotate_tracking_token.sql` para habilitar la generación de enlaces de seguimiento nuevos desde el detalle de una orden.
+   Aplicar también `supabase/migrations/20261014000000_rotate_tracking_token.sql` para habilitar la generación de enlaces de seguimiento nuevos desde el detalle de una orden y `supabase/migrations/20261015000000_admin_search.sql` para habilitar la búsqueda y paginación del panel.
 3. En Auth, desactivar los registros públicos. Invitar/crear las cuentas del equipo desde el panel de Supabase y habilitar MFA en producción.
 4. Dar acceso de operador o administrador a cada cuenta creada, ejecutando como propietario del proyecto:
 
@@ -68,6 +69,17 @@ Si una cuenta se deshabilita, establecer `admin_profiles.active = false` y revoc
 - `/admin/consultas/nueva`: registro manual de una conversación de WhatsApp.
 - `POST /api/tracking`: verifica la clave y devuelve solo el estado público. La clave viaja en el fragmento/en el cuerpo de la solicitud, nunca como parámetro de API ni se persiste en texto claro.
 - `POST /api/inquiries`: valida y guarda consultas web mediante una función SQL; no expone datos personales al público.
+- `GET /api/admin/lists/clients`, `GET /api/admin/lists/orders`, `GET /api/admin/lists/documents` y `GET /api/admin/lists/inquiries`: búsqueda autenticada, filtros validados y paginación estable con cursor (`limit` máximo 100); no devuelve totales costosos ni permite nombres de columna de ordenamiento arbitrarios.
+
+## Búsqueda y paginación del panel
+
+- Las cuatro bandejas realizan una primera carga en servidor y consultan páginas siguientes desde `/api/admin/lists/[module]`. La paginación usa `(updated_at, id)` como cursor compuesto; el desempate por UUID evita saltos cuando hay fechas iguales.
+- Las búsquedas aceptan texto acotado, rango de fechas y filtros específicos por módulo: archivo para clientes; estado y prioridad para órdenes; estado y plantilla para documentos; estado y canal para consultas.
+- Los resultados se limitan a 25 por defecto y 100 como máximo. No se carga el directorio completo ni se solicita un `COUNT(*)` exacto en cada búsqueda.
+- La migración `20261015000000_admin_search.sql` añade índices B-tree compuestos para orden y filtros, índices trigram para coincidencias parciales, índices GIN de texto completo para órdenes/consultas/documentos, y un campo `search_text` acotado a 4.000 caracteres para buscar en los datos variables de documentos. El cambio inicial de documentos llena ese campo; los cambios posteriores lo mantienen con un trigger.
+- Las funciones SQL son `SECURITY INVOKER`, solo se conceden a `authenticated` y respetan las políticas RLS existentes. El API vuelve a comprobar que la cuenta tenga un perfil administrativo activo. La bandeja de consultas devuelve el contacto solo cuando existe consentimiento; el enlace público no recibe acceso a estos endpoints.
+- Los filtros y el cursor se reflejan en la URL. La búsqueda de texto espera 300 ms después de escribir, cancela las solicitudes anteriores y muestra errores de API sin reemplazar silenciosamente los resultados.
+- Las búsquedas parciales de 1 carácter se rechazan para evitar exploraciones amplias; se requiere un mínimo de 2 caracteres. Si el volumen crece, revisar planes reales con `EXPLAIN (ANALYZE, BUFFERS)` y ajustar o retirar índices según uso antes de añadir un motor de búsqueda externo.
 
 ## Controles de seguridad y operación
 
