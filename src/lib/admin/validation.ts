@@ -18,24 +18,39 @@ export const clientSchema = z.object({
   notes: optionalText(2000),
 });
 
+export const adminLoginSchema = z.object({
+  email: z.string().trim().email("Ingresa un correo válido.").max(254, "El correo no puede superar 254 caracteres."),
+  password: z.string().min(1, "Ingresa tu contraseña.").max(1024, "La contraseña es demasiado larga."),
+});
+
+export const documentEmailSchema = z.object({
+  recipient: z.string().trim().email("Ingresa un correo válido.").max(254, "El correo no puede superar 254 caracteres."),
+});
+
 export const orderSchema = z.object({
   client_id: z.string().uuid("Selecciona un cliente."),
-  service_type: z.string().trim().min(2).max(100),
-  service_description: z.string().trim().min(3).max(2000),
+  service_type: z.string().trim().min(2, "Selecciona un tipo de servicio.").max(100),
+  service_description: z.string().trim().min(3, "Describe el servicio.").max(2000),
   priority: z.enum(["standard", "urgent"]),
   quoted_amount: z.preprocess(
     (value) => (value === "" || value === null ? undefined : value),
-    z.coerce.number().min(0).max(999999999).optional(),
+    z.coerce.number().min(0, "El precio no puede ser negativo.").max(999999999, "El precio es demasiado alto.").optional(),
   ),
   payment_method: optionalText(80),
   equipment_brand: optionalText(100),
   equipment_model: optionalText(100),
   equipment_serial: optionalText(120),
-  reported_problem: z.string().trim().min(3).max(2000),
-  authorized_work: z.string().trim().min(3).max(2000),
+  reported_problem: z.string().trim().min(3, "Describe el problema reportado.").max(2000),
+  authorized_work: z.string().trim().min(3, "Indica el trabajo autorizado.").max(2000),
   backup_status: z.enum(["pending", "completed", "declined", "not_required"]),
   initial_condition: optionalText(2000),
-  warranty_days: z.coerce.number().int().min(0).max(365),
+  warranty_days: z.preprocess(
+    (value) => value === "" || value === null ? undefined : value,
+    z.coerce.number()
+      .int("Ingresa una cantidad entera de días.")
+      .min(0, "La garantía no puede ser negativa.")
+      .max(365, "La garantía no puede superar 365 días."),
+  ),
 });
 
 export const statusUpdateSchema = z.object({

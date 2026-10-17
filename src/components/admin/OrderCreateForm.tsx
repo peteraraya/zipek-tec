@@ -4,7 +4,9 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { createOrderAction, type OrderCreateState } from "@/app/actions/admin";
 import { AdminField, AdminInput, AdminSelect, AdminTextarea, adminButtonClass } from "@/components/admin/AdminField";
+import { createZodFormValidator, LiveValidation } from "@/components/admin/LiveValidation";
 import type { ClientRecord } from "@/lib/admin/types";
+import { orderSchema } from "@/lib/admin/validation";
 
 export default function OrderCreateForm({ clients }: { clients: ClientRecord[] }) {
   const [state, action, pending] = useActionState<OrderCreateState, FormData>(createOrderAction, {});
@@ -38,7 +40,7 @@ export default function OrderCreateForm({ clients }: { clients: ClientRecord[] }
   }
 
   return (
-    <form action={action} className="space-y-5">
+    <LiveValidation action={action} className="space-y-5" validator={createZodFormValidator(orderSchema)}>
       {state.error && <p role="alert" className="rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{state.error}</p>}
       <div className="grid gap-5 md:grid-cols-2">
         <AdminField label="Cliente">
@@ -108,6 +110,6 @@ export default function OrderCreateForm({ clients }: { clients: ClientRecord[] }
       <button type="submit" className={adminButtonClass} disabled={pending}>
         {pending ? "Guardando orden..." : "Crear orden y generar seguimiento"}
       </button>
-    </form>
+    </LiveValidation>
   );
 }

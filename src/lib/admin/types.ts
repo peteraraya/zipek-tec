@@ -135,3 +135,18 @@ export interface ServiceOrderRevision {
   };
   created_at: string;
 }
+
+export interface ServiceDocumentRecord {
+  id: string;
+  client_id: string;
+  order_id: string | null;
+  template_id: string;
+  data: Record<string, string>;
+  status: "draft" | "sent";
+  sent_to: string | null;
+  sent_at: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  client?: { full_name: string };
+}

@@ -1,9 +1,19 @@
 import Link from "next/link";
-import { getServiceOrders } from "@/lib/admin/queries";
+import AdminSearchTable from "@/components/admin/AdminSearchTable";
+import { loadInitialAdminList } from "@/lib/admin/search";
 import { serviceStatusLabels } from "@/lib/admin/types";
+import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
-export default async function ServiceOrdersPage() {
-  const orders = await getServiceOrders();
+const priorityLabels = { standard: "Normal", urgent: "Urgente" };
+
+export default async function ServiceOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const { profile } = await requireStaff("orders.read");
+  const list = await loadInitialAdminList("orders", params);
 
   return (
     <section>
@@ -11,41 +21,41 @@ export default async function ServiceOrdersPage() {
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-light">Operación</p>
           <h1 className="mt-2 text-3xl font-bold text-white">Órdenes de servicio</h1>
-          <p className="mt-2 text-gray-400">Historial de trabajos, estados y acceso a documentos de servicio.</p>
+          <p className="mt-2 text-gray-400">Busca órdenes, clientes o equipos y combina estado, prioridad y fechas.</p>
         </div>
-        <Link href="/admin/ordenes/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Crear orden</Link>
+        {hasAdminPermission(profile.role, "orders.manage") && (
+          <Link href="/admin/ordenes/nueva" className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Crear orden</Link>
+        )}
       </div>
-
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03]">
-        <table className="w-full min-w-[820px] text-left text-sm">
-          <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-gray-500">
-            <tr>
-              <th className="px-6 py-4 font-medium">Orden</th>
-              <th className="px-6 py-4 font-medium">Cliente</th>
-              <th className="px-6 py-4 font-medium">Servicio</th>
-              <th className="px-6 py-4 font-medium">Estado</th>
-              <th className="px-6 py-4 font-medium">Prioridad</th>
-              <th className="px-6 py-4 font-medium">Actualizada</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {orders.map((order) => (
-              <tr key={order.id} className="text-gray-300">
-                <td className="px-6 py-4"><Link href={`/admin/ordenes/${order.id}`} className="font-semibold text-white hover:text-primary-light">{order.order_number}</Link></td>
-                <td className="px-6 py-4">{order.client.full_name}</td>
-                <td className="px-6 py-4">{order.service_type}</td>
-                <td className="px-6 py-4">{serviceStatusLabels[order.status]}</td>
-                <td className="px-6 py-4">{order.priority === "urgent" ? <span className="text-amber-300">Urgente</span> : "Normal"}</td>
-                <td className="px-6 py-4">{new Date(order.updated_at).toLocaleDateString("es-CL")}</td>
-              </tr>
-            ))}
-            {orders.length === 0 && (
-              <tr><td colSpan={6} className="px-6 py-10 text-center text-gray-400">Todavía no hay órdenes de servicio registradas.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      {orders.length === 200 && <p className="mt-3 text-xs text-gray-500">Se muestran las 200 órdenes más recientes.</p>}
+      {list.error && <p role="alert" className="mt-5 rounded-lg bg-amber-500/10 p-3 text-sm text-amber-100">{list.error}</p>}
+      <AdminSearchTable
+        module="orders"
+        initialData={list.data}
+        initialPage={list.page}
+        initialFilters={list.filters}
+        searchPlaceholder="N.º de orden, cliente o equipo"
+        emptyMessage="No hay órdenes que coincidan con estos filtros."
+        filters={[
+          {
+            key: "status",
+            label: "Estado",
+            options: Object.entries(serviceStatusLabels).map(([value, label]) => ({ value, label })),
+          },
+          {
+            key: "priority",
+            label: "Prioridad",
+            options: Object.entries(priorityLabels).map(([value, label]) => ({ value, label })),
+          },
+        ]}
+        columns={[
+          { key: "order_number", label: "Orden", hrefBase: "/admin/ordenes" },
+          { key: "client_name", label: "Cliente" },
+          { key: "service_type", label: "Servicio" },
+          { key: "status", label: "Estado", labels: serviceStatusLabels },
+          { key: "priority", label: "Prioridad", labels: priorityLabels },
+          { key: "updated_at", label: "Actualizada", date: true },
+        ]}
+      />
     </section>
   );
 }
