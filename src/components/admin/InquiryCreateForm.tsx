@@ -4,6 +4,8 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { createWhatsAppInquiryAction, type InquiryCreateState } from "@/app/actions/admin";
 import { AdminField, AdminInput, AdminTextarea, adminButtonClass } from "@/components/admin/AdminField";
+import { AdminValidationMessage, createZodFormValidator, LiveValidation } from "@/components/admin/LiveValidation";
+import { whatsappInquirySchema } from "@/lib/admin/validation";
 
 export default function InquiryCreateForm() {
   const [state, action, pending] = useActionState<InquiryCreateState, FormData>(
@@ -24,7 +26,7 @@ export default function InquiryCreateForm() {
   }
 
   return (
-    <form action={action} className="space-y-5">
+    <LiveValidation action={action} className="space-y-5" validator={createZodFormValidator(whatsappInquirySchema)}>
       {state.error && <p role="alert" className="rounded-lg border border-red-400/20 bg-red-400/10 p-3 text-sm text-red-200">{state.error}</p>}
       <p className="rounded-lg border border-primary-light/20 bg-primary/5 p-4 text-sm leading-relaxed text-primary-light">
         Registra manualmente las consultas recibidas por WhatsApp. Este formulario no importa mensajes automáticamente desde WhatsApp.
@@ -50,9 +52,10 @@ export default function InquiryCreateForm() {
         <input name="contact_consent" type="checkbox" className="mt-1 accent-primary" />
         <span>La persona autorizó usar el teléfono o correo únicamente para responder y dar seguimiento a esta consulta.</span>
       </label>
+      <AdminValidationMessage name="contact_consent" />
       <button type="submit" className={adminButtonClass} disabled={pending}>
         {pending ? "Guardando consulta..." : "Registrar consulta de WhatsApp"}
       </button>
-    </form>
+    </LiveValidation>
   );
 }

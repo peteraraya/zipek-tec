@@ -36,7 +36,7 @@ function getOptional(value: string | undefined) {
 }
 
 export async function createClientAction(formData: FormData) {
-  const { supabase, user } = await requireStaff();
+  const { supabase, user } = await requireStaff("clients.manage");
   const parsed = clientSchema.safeParse(readForm(formData));
   if (!parsed.success) redirect(`/admin/clientes?error=${encodeURIComponent(firstValidationError(parsed.error))}`);
 
@@ -57,7 +57,7 @@ export async function createClientAction(formData: FormData) {
 }
 
 export async function updateClientAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("clients.manage");
   const id = String(formData.get("id") ?? "");
   const parsed = clientSchema.safeParse(readForm(formData));
   if (!/^[0-9a-f-]{36}$/i.test(id) || !parsed.success) {
@@ -87,7 +87,7 @@ export async function updateClientAction(formData: FormData) {
 }
 
 export async function archiveClientAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("clients.manage");
   const id = String(formData.get("id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Identificador de cliente inválido.");
 
@@ -107,7 +107,7 @@ export async function createOrderAction(
   _state: OrderCreateState,
   formData: FormData,
 ): Promise<OrderCreateState> {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("orders.manage");
   const parsed = orderSchema.safeParse(readForm(formData));
   if (!parsed.success) return { error: firstValidationError(parsed.error) };
 
@@ -153,8 +153,52 @@ export async function createOrderAction(
   };
 }
 
+export type TrackingLinkState = {
+  error?: string;
+  trackingUrl?: string;
+  orderNumber?: string;
+};
+
+export async function rotateOrderTrackingLinkAction(
+  _state: TrackingLinkState,
+  formData: FormData,
+): Promise<TrackingLinkState> {
+  const { supabase } = await requireStaff("orders.manage");
+  const orderId = String(formData.get("order_id") ?? "");
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId)) {
+    return { error: "El identificador de la orden no es válido." };
+  }
+
+  const trackingToken = randomBytes(32).toString("base64url");
+  const trackingTokenHash = createHash("sha256").update(trackingToken).digest("hex");
+  const { error: rotateError } = await supabase.rpc("rotate_service_tracking_token", {
+    p_order_id: orderId,
+    p_tracking_token_hash: trackingTokenHash,
+  });
+
+  if (rotateError) {
+    console.error("No se pudo renovar el enlace privado de seguimiento", rotateError);
+    return { error: "No se pudo generar el enlace. Verifica que la migración de seguimiento esté aplicada." };
+  }
+
+  const { data: order, error: orderError } = await supabase
+    .from("service_orders")
+    .select("order_number")
+    .eq("id", orderId)
+    .single();
+  if (orderError) throw new Error(`El enlace se generó, pero no se pudo cargar el número de orden: ${orderError.message}`);
+
+  return {
+    orderNumber: order.order_number,
+    trackingUrl: new URL(
+      `/seguimiento#${trackingToken}`,
+      process.env.NEXT_PUBLIC_SITE_URL ?? siteConfig.url,
+    ).toString(),
+  };
+}
+
 export async function updateOrderStatusAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("orders.manage");
   const parsed = statusUpdateSchema.safeParse(readForm(formData));
   if (!parsed.success) throw new Error(firstValidationError(parsed.error));
 
@@ -171,7 +215,7 @@ export async function updateOrderStatusAction(formData: FormData) {
 }
 
 export async function logServiceTaskAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("orders.manage");
   const parsed = taskSchema.safeParse(readForm(formData));
   if (!parsed.success) throw new Error(firstValidationError(parsed.error));
 
@@ -186,7 +230,7 @@ export async function logServiceTaskAction(formData: FormData) {
 }
 
 export async function updateServiceReportAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("inquiries.manage");
   const parsed = reportSchema.safeParse(readForm(formData));
   if (!parsed.success) throw new Error(firstValidationError(parsed.error));
 
@@ -238,7 +282,7 @@ export async function createWhatsAppInquiryAction(
   _state: InquiryCreateState,
   formData: FormData,
 ): Promise<InquiryCreateState> {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("inquiries.manage");
   const parsed = whatsappInquirySchema.safeParse(readForm(formData));
   if (!parsed.success) return { error: firstValidationError(parsed.error) };
 
@@ -268,7 +312,7 @@ export async function createWhatsAppInquiryAction(
 }
 
 export async function updateInquiryStatusAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("inquiries.manage");
   const parsed = inquiryStatusSchema.safeParse(readForm(formData));
   if (!parsed.success) throw new Error(firstValidationError(parsed.error));
 
@@ -284,7 +328,7 @@ export async function updateInquiryStatusAction(formData: FormData) {
 }
 
 export async function addInquiryNoteAction(formData: FormData) {
-  const { supabase } = await requireStaff();
+  const { supabase } = await requireStaff("inquiries.manage");
   const parsed = inquiryNoteSchema.safeParse(readForm(formData));
   if (!parsed.success) throw new Error(firstValidationError(parsed.error));
 

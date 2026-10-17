@@ -1,12 +1,14 @@
 import { updateOrderStatusAction } from "@/app/actions/admin";
 import { AdminField, AdminInput, AdminSelect, adminButtonClass } from "@/components/admin/AdminField";
+import { createZodFormValidator, LiveValidation } from "@/components/admin/LiveValidation";
 import { serviceStatusLabels, type ServiceOrderRecord, type ServiceStatus } from "@/lib/admin/types";
+import { statusUpdateSchema } from "@/lib/admin/validation";
 
 const statuses = Object.entries(serviceStatusLabels) as Array<[ServiceStatus, string]>;
 
 export default function StatusUpdateForm({ order }: { order: ServiceOrderRecord }) {
   return (
-    <form action={updateOrderStatusAction} className="flex flex-col gap-4 md:flex-row md:items-end">
+    <LiveValidation action={updateOrderStatusAction} className="flex flex-col gap-4 md:flex-row md:items-end" validator={createZodFormValidator(statusUpdateSchema)}>
       <input type="hidden" name="order_id" value={order.id} />
       <div className="md:w-64">
         <AdminField label="Cambiar estado">
@@ -22,6 +24,6 @@ export default function StatusUpdateForm({ order }: { order: ServiceOrderRecord 
         </AdminField>
       </div>
       <button className={adminButtonClass} type="submit">Actualizar</button>
-    </form>
+    </LiveValidation>
   );
 }

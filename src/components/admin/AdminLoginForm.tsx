@@ -3,12 +3,14 @@
 import { useActionState } from "react";
 import { signInAdmin, type LoginState } from "@/app/actions/admin-auth";
 import { AdminField, AdminInput, adminButtonClass } from "@/components/admin/AdminField";
+import { createZodFormValidator, LiveValidation } from "@/components/admin/LiveValidation";
+import { adminLoginSchema } from "@/lib/admin/validation";
 
 export default function AdminLoginForm({ unauthorized }: { unauthorized: boolean }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(signInAdmin, {});
 
   return (
-    <form action={action} className="mt-8 space-y-5">
+    <LiveValidation action={action} className="mt-8 space-y-5" validator={createZodFormValidator(adminLoginSchema)}>
       {unauthorized && (
         <p role="alert" className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
           Esta cuenta no tiene acceso administrativo habilitado.
@@ -28,6 +30,6 @@ export default function AdminLoginForm({ unauthorized }: { unauthorized: boolean
       <button type="submit" disabled={pending} className={`${adminButtonClass} w-full`}>
         {pending ? "Ingresando..." : "Iniciar sesión"}
       </button>
-    </form>
+    </LiveValidation>
   );
 }

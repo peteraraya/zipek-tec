@@ -1,8 +1,10 @@
 import Link from "next/link";
 import OrderCreateForm from "@/components/admin/OrderCreateForm";
 import { getClients } from "@/lib/admin/queries";
+import { requireStaff } from "@/lib/admin/auth";
 
 export default async function NewServiceOrderPage() {
+  await requireStaff("orders.manage");
   const clients = await getClients();
 
   return (

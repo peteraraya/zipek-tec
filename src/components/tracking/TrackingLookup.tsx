@@ -15,6 +15,20 @@ interface TrackingData {
 }
 
 const tokenPattern = /^[A-Za-z0-9_-]{43}$/;
+const orderNumberPattern = /^ZI-\d{4}-\d+$/i;
+
+function extractTrackingToken(value: string) {
+  const input = value.trim();
+  if (tokenPattern.test(input)) return input;
+
+  try {
+    const url = new URL(input, window.location.origin);
+    const fragment = url.hash.slice(1);
+    return tokenPattern.test(fragment) ? fragment : null;
+  } catch {
+    return null;
+  }
+}
 
 function subscribeToHash(callback: () => void) {
   window.addEventListener("hashchange", callback);
@@ -119,13 +133,18 @@ export default function TrackingLookup() {
     event.preventDefault();
     setIsLoading(true);
     setResult(null);
-    const normalizedToken = token.trim();
-    if (tokenPattern.test(normalizedToken)) {
+    const normalizedToken = extractTrackingToken(token);
+    if (normalizedToken) {
+      setEditedToken(normalizedToken);
       window.history.replaceState(null, "", `/seguimiento#${normalizedToken}`);
       void loadTracking(normalizedToken);
     } else {
       setIsLoading(false);
-      setError(`Ingresa el código completo que recibiste de ${siteConfig.shortName}.`);
+      setError(
+        orderNumberPattern.test(token.trim())
+          ? `Ese es el número de orden, no la clave privada de seguimiento. Por seguridad, el número de orden no permite consultar el estado. Pide a ${siteConfig.shortName} que te reenvíe el enlace completo de seguimiento.`
+          : `Pega el enlace completo de seguimiento o la clave privada de 43 caracteres que recibiste de ${siteConfig.shortName}.`,
+      );
     }
   };
 
@@ -133,7 +152,7 @@ export default function TrackingLookup() {
     <div className="mx-auto max-w-2xl">
       <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
         <label className="block text-sm font-medium text-gray-200" htmlFor="tracking-token">
-          Código o enlace de seguimiento
+          Enlace o clave privada de seguimiento
         </label>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
           <input
@@ -149,7 +168,7 @@ export default function TrackingLookup() {
           </button>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-gray-500">
-          El enlace funciona como una clave privada: compártelo solo con personas autorizadas.
+          Puedes pegar el enlace completo o solo su clave privada. El número de orden (ZI-...) no sirve para consultar; comparte el enlace solo con personas autorizadas.
         </p>
       </form>
 

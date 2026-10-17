@@ -8,6 +8,7 @@ import type {
   ServiceOrderEvent,
   ServiceOrderRecord,
   ServiceOrderRevision,
+  ServiceDocumentRecord,
   ServiceTask,
 } from "@/lib/admin/types";
 
@@ -19,33 +20,40 @@ export class AdminRecordNotFoundError extends Error {
 }
 
 export async function getAdminOverview() {
-  const { supabase } = await requireStaff();
-  const [clientsResult, ordersResult, openResult, urgentResult, inquiriesResult] = await Promise.all([
-    supabase.from("clients").select("id", { count: "exact", head: true }).is("archived_at", null),
-    supabase.from("service_orders").select("id", { count: "exact", head: true }),
-    supabase
-      .from("service_orders")
-      .select("id", { count: "exact", head: true })
-      .not("status", "in", '("delivered","cancelled")'),
-    supabase
-      .from("service_orders")
-      .select("id", { count: "exact", head: true })
-      .eq("priority", "urgent")
-      .not("status", "in", '("delivered","cancelled")'),
-    supabase.from("service_inquiries").select("id", { count: "exact", head: true })
-      .not("status", "in", '("resolved","closed")'),
-  ]);
+  const { supabase } = await requireStaff("reports.read");
+  const { data, error } = await supabase.rpc("get_admin_operational_metrics");
+  if (error) throw new Error(`No se pudo cargar el resumen administrativo: ${error.message}`);
+  if (!data || typeof data !== "object") throw new Error("La base de datos devolvió métricas inválidas.");
 
-  for (const result of [clientsResult, ordersResult, openResult, urgentResult, inquiriesResult]) {
-    if (result.error) throw new Error(`No se pudo cargar el resumen administrativo: ${result.error.message}`);
-  }
+  const metrics = data as Record<string, unknown>;
+  const readCount = (key: string) => {
+    const value = metrics[key];
+    if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
+      throw new Error(`La métrica administrativa "${key}" no es válida.`);
+    }
+    return value;
+  };
+  const readAverage = (key: string) => {
+    const value = metrics[key];
+    if (value === null) return null;
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+      throw new Error(`La métrica administrativa "${key}" no es válida.`);
+    }
+    return value;
+  };
 
   return {
-    clients: clientsResult.count ?? 0,
-    orders: ordersResult.count ?? 0,
-    openOrders: openResult.count ?? 0,
-    urgentOrders: urgentResult.count ?? 0,
-    openInquiries: inquiriesResult.count ?? 0,
+    clients: readCount("active_clients"),
+    orders: readCount("total_orders"),
+    openOrders: readCount("open_orders"),
+    urgentOrders: readCount("urgent_open_orders"),
+    openInquiries: readCount("open_inquiries"),
+    overdueInquiries: readCount("overdue_inquiries"),
+    overdueUrgentOrders: readCount("overdue_urgent_orders"),
+    staleOrders: readCount("stale_orders"),
+    failedDocumentEmails: readCount("failed_document_emails_7d"),
+    averageFirstResponseHours: readAverage("avg_first_response_business_hours_90d"),
+    averageOrderCompletionHours: readAverage("avg_order_completion_business_hours_90d"),
   };
 }
 
@@ -179,4 +187,34 @@ export async function getServiceOrder(id: string): Promise<{
     tasks: (tasksResult.data ?? []) as ServiceTask[],
     revisions: (revisionsResult.data ?? []) as ServiceOrderRevision[],
   };
+}
+
+export async function getServiceDocuments(): Promise<ServiceDocumentRecord[]> {
+  const { supabase } = await requireStaff();
+  const { data, error } = await supabase
+    .from("service_documents")
+    .select("*, client:clients!service_documents_client_id_fkey(full_name)")
+    .order("updated_at", { ascending: false })
+    .limit(200);
+
+  if (error) throw new Error(`No se pudieron cargar los documentos: ${error.message}`);
+  return (data ?? []) as ServiceDocumentRecord[];
+}
+
+export async function getServiceDocument(id: string): Promise<{
+  document: ServiceDocumentRecord;
+  client: ClientRecord;
+}> {
+  const { supabase } = await requireStaff();
+  const { data, error } = await supabase
+    .from("service_documents")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error?.code === "PGRST116") throw new AdminRecordNotFoundError("El documento");
+  if (error) throw new Error(`No se pudo cargar el documento: ${error.message}`);
+  const document = data as ServiceDocumentRecord;
+  const client = await getClient(document.client_id);
+  return { document, client };
 }
