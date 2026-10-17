@@ -140,10 +140,10 @@ export default function ProcessFlow({ city }: ProcessFlowProps) {
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.35, delay: shouldReduceMotion ? 0 : index * 0.07 }}
             >
-              <span className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-primary-light/40 bg-[#0a1120] text-xs font-semibold tabular-nums text-primary-light lg:mx-auto lg:mb-3">
+              <span className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-primary-light/40 bg-background text-xs font-semibold tabular-nums text-primary-light lg:mx-auto lg:mb-3">
                 0{index + 1}
               </span>
-              <div className="border border-white/[0.09] bg-white/[0.02] p-4 sm:p-5 lg:min-h-[14rem]">
+              <div className="rounded-xl border border-white/[0.09] bg-background p-4 sm:p-5 lg:min-h-[14rem]">
                 <div className="flex items-start justify-between gap-3">
                   <h4 className="font-semibold text-white">{title}</h4>
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary-light" aria-hidden="true" />

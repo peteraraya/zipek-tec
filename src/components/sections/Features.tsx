@@ -29,7 +29,7 @@ export default function Features() {
               className="h-auto w-full"
               sizes="(max-width: 1024px) 100vw, 45vw"
             />
-            <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-xl border border-white/10 bg-[#080d19]/90 p-3 backdrop-blur">
+            <div className="features-image-caption absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-xl border border-white/10 bg-[#080d19]/90 p-3 backdrop-blur">
               <ShieldCheck className="h-5 w-5 shrink-0 text-primary-light" aria-hidden="true" />
               <p className="text-sm leading-5 text-gray-200">Conversamos cada paso contigo antes de intervenir.</p>
             </div>

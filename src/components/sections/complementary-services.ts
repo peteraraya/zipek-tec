@@ -1,6 +1,16 @@
 import type { LucideIcon } from "lucide-react";
 import { Building2, HardDrive, Laptop, ShieldCheck } from "lucide-react";
 
+/**
+ * Contenido público de un servicio complementario.
+ *
+ * @property title Nombre breve que se muestra en la ficha.
+ * @property description Resumen para consulta rápida.
+ * @property topic Tema inicial que se envía al formulario de consultas.
+ * @property includes Alcance orientativo que puede incluirse.
+ * @property confirm Condiciones y dependencias que se verifican previamente.
+ * @property delivery Resultado o información que recibe el cliente.
+ */
 export interface ComplementaryService {
   title: string;
   description: string;
@@ -10,6 +20,14 @@ export interface ComplementaryService {
   delivery: string;
 }
 
+/**
+ * Categoría del catálogo y sus servicios relacionados.
+ *
+ * @property title Nombre visible de la categoría.
+ * @property summary Resumen del área de trabajo.
+ * @property icon Icono Lucide asociado a la categoría.
+ * @property services Servicios que forman parte de la categoría.
+ */
 export interface ComplementaryServiceGroup {
   title: string;
   summary: string;
@@ -17,6 +35,9 @@ export interface ComplementaryServiceGroup {
   services: ComplementaryService[];
 }
 
+/**
+ * Catálogo estático mostrado por la sección de servicios complementarios.
+ */
 export const complementaryServiceGroups: ComplementaryServiceGroup[] = [
   {
     title: "Equipos",
@@ -111,3 +132,11 @@ export const complementaryServiceGroups: ComplementaryServiceGroup[] = [
     ],
   },
 ];
+
+/**
+ * Cantidad de servicios del catálogo, calculada una sola vez al cargar el módulo.
+ */
+export const complementaryServiceCount = complementaryServiceGroups.reduce(
+  (total, group) => total + group.services.length,
+  0,
+);
