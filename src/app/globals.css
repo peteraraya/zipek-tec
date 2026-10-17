@@ -228,12 +228,12 @@ html.light .public-site #contacto {
   background-color: #edf2f4;
 }
 
-html.light .public-site #como-trabajamos .absolute {
+html.light .public-site #como-trabajamos .features-image-caption {
   border-color: var(--border-subtle);
   background-color: #ffffff;
 }
 
-html.light .public-site #como-trabajamos .absolute p {
+html.light .public-site #como-trabajamos .features-image-caption p {
   color: var(--foreground);
 }
 
