@@ -7,8 +7,9 @@
 - **Persistencia:** PostgreSQL administrado por Supabase. Las tablas privadas tienen RLS y las operaciones críticas pasan por funciones SQL que validan el perfil activo.
 - **Capa de acceso:** Server Components y Server Actions usan el cliente SSR autenticado; `src/proxy.ts` actualiza las cookies de sesión. No se usa la clave `service_role`.
 - **Seguimiento público:** la página comparte una clave aleatoria de 256 bits en el fragmento del enlace. Solo se almacena su SHA-256. El visitante envía la clave al backend y recibe los campos públicos mínimos. Se emite un broadcast privado de Supabase Realtime para la clave correspondiente y se conserva una consulta de respaldo cada 15 segundos.
+- **Renovación de enlace:** desde el detalle de una orden, personal activo puede generar y copiar un nuevo enlace privado. La operación sustituye el hash vigente en `service_tracking_tokens`; el enlace anterior queda invalidado. El valor nuevo solo se muestra tras generarlo y no se puede recuperar desde la base de datos.
 - **Consultas:** el formulario web permite elegir entre enviar una consulta anónima (sin respuesta posible) o solicitar respuesta proporcionando teléfono o correo y autorizando expresamente su uso para ese fin. El código de referencia no permite consultar el contenido ni el estado de una consulta; sirve para retomarla manualmente por WhatsApp. Las conversaciones de WhatsApp se registran manualmente desde el panel; no hay sincronización automática con Meta/WhatsApp Business.
-- **Documentos:** orden de servicio (Anexo A) e informe de servicio (Anexo B) se presentan como HTML imprimible, compatible con impresión o “Guardar como PDF”.
+- **Documentos:** `/admin/documentos` permite crear, editar y guardar borradores para los diez documentos de servicio, vinculados a un cliente y opcionalmente a una orden. Cada documento tiene vista imprimible compatible con “Guardar como PDF” y puede enviarse por correo con un PDF adjunto y una versión HTML en el cuerpo. El envío requiere `RESEND_API_KEY` y `RESEND_FROM_EMAIL` con un remitente verificado en Resend. Los borradores y su estado de envío se guardan en `service_documents`, protegida por RLS para personal activo. Las firmas siguen siendo manuscritas o deben coordinarse por un canal acordado; el panel no ofrece firma electrónica. La plantilla de autorización está también en `docs/authorization-intervention-backup.md`.
 
 ## Modelo de datos
 
@@ -24,6 +25,7 @@ La migración `supabase/migrations/20261011000000_service_operations.sql` crea:
 | `service_tracking_tokens` | Hash de la clave de seguimiento, vinculado a la orden y revocable. |
 | `service_inquiries` | Consulta, canal, estado y datos de contacto opcionales sujetos a autorización. |
 | `service_inquiry_events` | Historial interno de creación, cambios de estado y notas de seguimiento. |
+| `service_documents` | Borradores de documentos operativos, datos completados y estado del envío de correo. |
 
 Las funciones transaccionales `create_service_order`, `update_service_order_status`, `log_service_task` y `update_service_report` escriben la operación y su historial dentro de la misma transacción. La función `get_public_tracking_status` solo devuelve número de orden, tipo de servicio, estado, mensaje público y eventos marcados como públicos.
 
@@ -31,7 +33,8 @@ Las funciones transaccionales `create_service_order`, `update_service_order_stat
 
 1. Crear un proyecto Supabase y configurar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` en `.env.local` (ver `.env.example`). Configurar `NEXT_PUBLIC_SITE_URL` con el dominio de producción.
 2. Aplicar la migración SQL completa desde Supabase CLI (`supabase db push`) o el editor SQL del proyecto. No aplicar fragmentos: crea tipos, tablas, funciones, triggers y políticas de seguridad relacionados.
-   Aplicar también `supabase/migrations/20261012000000_service_inquiries.sql` para habilitar las consultas y su bandeja administrativa.
+   Aplicar también `supabase/migrations/20261012000000_service_inquiries.sql` y `supabase/migrations/20261013000000_service_documents.sql` para habilitar las consultas y el módulo de documentos.
+   Aplicar también `supabase/migrations/20261014000000_rotate_tracking_token.sql` para habilitar la generación de enlaces de seguimiento nuevos desde el detalle de una orden.
 3. En Auth, desactivar los registros públicos. Invitar/crear las cuentas del equipo desde el panel de Supabase y habilitar MFA en producción.
 4. Dar acceso de operador o administrador a cada cuenta creada, ejecutando como propietario del proyecto:
 
@@ -47,6 +50,7 @@ Las funciones transaccionales `create_service_order`, `update_service_order_stat
    ```
 
 5. Ejecutar `npm run dev`; entrar a `/admin/login`. En producción, configurar las mismas variables en el proveedor de despliegue. La clave `service_role` no debe agregarse al frontend ni a las variables `NEXT_PUBLIC_*`.
+6. Para envío de documentos por correo, configurar `RESEND_API_KEY` y `RESEND_FROM_EMAIL` en el entorno del servidor. El dominio o dirección remitente debe estar verificado por Resend; sin estas variables, guardar e imprimir borradores sigue disponible, pero el envío muestra un error y no simula éxito.
 
 Si una cuenta se deshabilita, establecer `admin_profiles.active = false` y revocar su sesión desde Supabase Auth. El acceso a las tablas y funciones vuelve a comprobar el estado activo en PostgreSQL.
 
@@ -56,6 +60,8 @@ Si una cuenta se deshabilita, establecer `admin_profiles.active = false` y revoc
 - `/admin/clientes`, `/admin/clientes/nuevo`, `/admin/clientes/[id]`: alta, consulta, edición y archivo lógico de clientes.
 - `/admin/ordenes`, `/admin/ordenes/nueva`, `/admin/ordenes/[id]`: alta de órdenes, estado, informe, registro de tareas e historial.
 - `/admin/ordenes/[id]/documentos`: anexos A y B para impresión.
+- `/admin/documentos`: plantillas, borradores guardados, edición, impresión/PDF y envío por correo.
+- `/admin/documentos/nuevo/[tipo]` y `/admin/documentos/[id]`: completar y revisar los diez tipos de documentos operativos.
 - `/seguimiento`: consulta pública mediante el enlace privado que se genera al crear la orden.
 - `/consultas`: formulario público para registrar una consulta y recibir un código de referencia.
 - `/admin/consultas`, `/admin/consultas/[id]`: bandeja privada, estados, historial y notas internas.

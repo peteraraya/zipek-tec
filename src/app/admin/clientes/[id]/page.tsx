@@ -28,12 +28,17 @@ export default async function EditClientPage({
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-light">Ficha de cliente</p>
           <h1 className="mt-2 text-3xl font-bold text-white">{client.full_name}</h1>
         </div>
-        {!client.archived_at && (
-          <form action={archiveClientAction}>
-            <input type="hidden" name="id" value={client.id} />
-            <button className="rounded-lg border border-red-400/20 px-4 py-3 text-sm text-red-200 hover:bg-red-500/10" type="submit">Archivar cliente</button>
-          </form>
-        )}
+        <div className="flex flex-wrap gap-3">
+          <Link href={`/admin/documentos?cliente=${client.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">
+            Generar documento
+          </Link>
+          {!client.archived_at && (
+            <form action={archiveClientAction}>
+              <input type="hidden" name="id" value={client.id} />
+              <button className="rounded-lg border border-red-400/20 px-4 py-3 text-sm text-red-200 hover:bg-red-500/10" type="submit">Archivar cliente</button>
+            </form>
+          )}
+        </div>
       </div>
       {query.error && <p role="alert" className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{query.error}</p>}
       {client.archived_at && <p className="mt-5 rounded-lg bg-amber-500/10 p-3 text-sm text-amber-100">Cliente archivado.</p>}

@@ -287,35 +287,57 @@ html.a11y-dyslexia * {
 @media print {
   @page {
     size: A4;
-    margin: 16mm;
+    margin: 12mm;
   }
 
+  html,
   body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
     background: #fff !important;
     color: #111 !important;
     overflow: visible !important;
   }
 
   body * {
+    visibility: hidden !important;
+  }
+
+  .print-only-document,
+  .print-only-document * {
+    visibility: visible !important;
+  }
+
+  .print-only-document {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-only-document *,
+  .print-only-document *::before,
+  .print-only-document *::after {
     color: #111 !important;
     text-shadow: none !important;
     box-shadow: none !important;
   }
 
-  .no-print {
-    display: none !important;
-  }
-
-  .print-document {
-    background: #fff !important;
-  }
-
-  .page-break {
-    break-before: page;
-    page-break-before: always;
-  }
-
-  .document-section {
+  .print-only-document section,
+  .print-only-document header,
+  .print-only-document footer {
     break-inside: avoid;
     page-break-inside: avoid;
   }

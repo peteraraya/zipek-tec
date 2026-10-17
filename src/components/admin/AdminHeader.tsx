@@ -21,6 +21,9 @@ export default function AdminHeader({ name }: { name: string }) {
           <Link className="rounded-lg px-3 py-2 text-gray-300 hover:bg-white/5 hover:text-white" href="/admin/ordenes">
             Órdenes
           </Link>
+          <Link className="rounded-lg px-3 py-2 text-gray-300 hover:bg-white/5 hover:text-white" href="/admin/documentos">
+            Documentos
+          </Link>
           <Link className="rounded-lg px-3 py-2 text-gray-300 hover:bg-white/5 hover:text-white" href="/admin/consultas">
             Consultas
           </Link>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ReportEditor from "@/components/admin/ReportEditor";
 import StatusUpdateForm from "@/components/admin/StatusUpdateForm";
 import TaskLogForm from "@/components/admin/TaskLogForm";
+import TrackingLinkManager from "@/components/admin/TrackingLinkManager";
 import { serviceStatusLabels } from "@/lib/admin/types";
 import { AdminRecordNotFoundError, getServiceOrder } from "@/lib/admin/queries";
 
@@ -32,11 +33,18 @@ export default async function ServiceOrderDetailPage({
           <h1 className="mt-2 text-3xl font-bold text-white">{order.service_type}</h1>
           <p className="mt-2 text-gray-400">{client.full_name} · {client.phone}</p>
         </div>
-        <Link href={`/admin/ordenes/${id}/documentos`} className="rounded-lg border border-white/10 px-4 py-3 text-sm text-gray-200 hover:bg-white/5">Orden e informe imprimibles</Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href={`/admin/ordenes/${id}/documentos`} className="rounded-lg border border-white/10 px-4 py-3 text-sm text-gray-200 hover:bg-white/5">Orden e informe imprimibles</Link>
+          <Link href={`/admin/documentos?cliente=${client.id}&orden=${order.id}`} className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white hover:bg-primary-light">Generar documento</Link>
+        </div>
       </div>
 
       {query.error && <p role="alert" className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{query.error}</p>}
       {query.reportUpdated && <p className="mt-5 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-200">Informe guardado en el historial.</p>}
+
+      <div className="mt-8">
+        <TrackingLinkManager orderId={order.id} orderNumber={order.order_number} />
+      </div>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">

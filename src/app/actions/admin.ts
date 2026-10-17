@@ -153,6 +153,50 @@ export async function createOrderAction(
   };
 }
 
+export type TrackingLinkState = {
+  error?: string;
+  trackingUrl?: string;
+  orderNumber?: string;
+};
+
+export async function rotateOrderTrackingLinkAction(
+  _state: TrackingLinkState,
+  formData: FormData,
+): Promise<TrackingLinkState> {
+  const { supabase } = await requireStaff();
+  const orderId = String(formData.get("order_id") ?? "");
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId)) {
+    return { error: "El identificador de la orden no es válido." };
+  }
+
+  const trackingToken = randomBytes(32).toString("base64url");
+  const trackingTokenHash = createHash("sha256").update(trackingToken).digest("hex");
+  const { error: rotateError } = await supabase.rpc("rotate_service_tracking_token", {
+    p_order_id: orderId,
+    p_tracking_token_hash: trackingTokenHash,
+  });
+
+  if (rotateError) {
+    console.error("No se pudo renovar el enlace privado de seguimiento", rotateError);
+    return { error: "No se pudo generar el enlace. Verifica que la migración de seguimiento esté aplicada." };
+  }
+
+  const { data: order, error: orderError } = await supabase
+    .from("service_orders")
+    .select("order_number")
+    .eq("id", orderId)
+    .single();
+  if (orderError) throw new Error(`El enlace se generó, pero no se pudo cargar el número de orden: ${orderError.message}`);
+
+  return {
+    orderNumber: order.order_number,
+    trackingUrl: new URL(
+      `/seguimiento#${trackingToken}`,
+      process.env.NEXT_PUBLIC_SITE_URL ?? siteConfig.url,
+    ).toString(),
+  };
+}
+
 export async function updateOrderStatusAction(formData: FormData) {
   const { supabase } = await requireStaff();
   const parsed = statusUpdateSchema.safeParse(readForm(formData));

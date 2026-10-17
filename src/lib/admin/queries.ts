@@ -8,6 +8,7 @@ import type {
   ServiceOrderEvent,
   ServiceOrderRecord,
   ServiceOrderRevision,
+  ServiceDocumentRecord,
   ServiceTask,
 } from "@/lib/admin/types";
 
@@ -179,4 +180,34 @@ export async function getServiceOrder(id: string): Promise<{
     tasks: (tasksResult.data ?? []) as ServiceTask[],
     revisions: (revisionsResult.data ?? []) as ServiceOrderRevision[],
   };
+}
+
+export async function getServiceDocuments(): Promise<ServiceDocumentRecord[]> {
+  const { supabase } = await requireStaff();
+  const { data, error } = await supabase
+    .from("service_documents")
+    .select("*, client:clients!service_documents_client_id_fkey(full_name)")
+    .order("updated_at", { ascending: false })
+    .limit(200);
+
+  if (error) throw new Error(`No se pudieron cargar los documentos: ${error.message}`);
+  return (data ?? []) as ServiceDocumentRecord[];
+}
+
+export async function getServiceDocument(id: string): Promise<{
+  document: ServiceDocumentRecord;
+  client: ClientRecord;
+}> {
+  const { supabase } = await requireStaff();
+  const { data, error } = await supabase
+    .from("service_documents")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error?.code === "PGRST116") throw new AdminRecordNotFoundError("El documento");
+  if (error) throw new Error(`No se pudo cargar el documento: ${error.message}`);
+  const document = data as ServiceDocumentRecord;
+  const client = await getClient(document.client_id);
+  return { document, client };
 }
