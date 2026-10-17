@@ -6,6 +6,8 @@ import {
   type DocumentEmailState,
 } from "@/app/actions/documents";
 import { adminButtonClass, AdminField, AdminInput } from "@/components/admin/AdminField";
+import { createZodFormValidator, LiveValidation } from "@/components/admin/LiveValidation";
+import { documentEmailSchema } from "@/lib/admin/validation";
 
 export default function DocumentEmailForm({
   documentId,
@@ -20,7 +22,7 @@ export default function DocumentEmailForm({
   );
 
   return (
-    <form action={action} className="space-y-4">
+    <LiveValidation action={action} className="space-y-4" validator={createZodFormValidator(documentEmailSchema)}>
       <input type="hidden" name="document_id" value={documentId} />
       <AdminField label="Enviar este documento al correo">
         <AdminInput type="email" name="recipient" required maxLength={254} defaultValue={defaultEmail} />
@@ -33,6 +35,6 @@ export default function DocumentEmailForm({
       <button type="submit" className={adminButtonClass} disabled={pending}>
         {pending ? "Enviando..." : "Enviar por correo"}
       </button>
-    </form>
+    </LiveValidation>
   );
 }

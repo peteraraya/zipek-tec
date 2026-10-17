@@ -9,6 +9,32 @@ import {
 import type { DocumentTemplate } from "@/lib/admin/document-templates";
 import type { ClientRecord, ServiceOrderRecord } from "@/lib/admin/types";
 import { adminButtonClass, AdminField, AdminInput, AdminSelect, AdminTextarea } from "@/components/admin/AdminField";
+import { LiveValidation, type FormValidator } from "@/components/admin/LiveValidation";
+
+function createDocumentValidator(template: DocumentTemplate, documentId?: string): FormValidator {
+  return (values) => {
+    const errors: Record<string, string> = {};
+    if (!documentId && !values.client_id) errors.client_id = "Selecciona un cliente.";
+
+    for (const field of template.fields) {
+      const name = `data_${field.name}`;
+      const value = values[name];
+      const text = typeof value === "string" ? value.trim() : "";
+      const maxLength = field.type === "textarea" ? 10000 : 500;
+      if (field.required && !text) {
+        errors[name] = "Completa este campo.";
+      } else if (text.length > maxLength) {
+        errors[name] = `No superes los ${maxLength} caracteres.`;
+      } else if (field.type === "email" && text && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
+        errors[name] = "Ingresa un correo válido.";
+      } else if (field.type === "date" && text && !/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+        errors[name] = "Ingresa una fecha válida.";
+      }
+    }
+
+    return errors;
+  };
+}
 
 export default function DocumentEditor({
   template,
@@ -40,7 +66,7 @@ export default function DocumentEditor({
   }, [router, state.documentId]);
 
   return (
-    <form action={action} className="space-y-6">
+    <LiveValidation action={action} className="space-y-6" validator={createDocumentValidator(template, documentId)}>
       <input type="hidden" name="template_id" value={template.id} />
       {documentId && <input type="hidden" name="document_id" value={documentId} />}
       {state.error && <p role="alert" className="rounded-lg bg-red-500/10 p-3 text-sm text-red-200">{state.error}</p>}
@@ -134,6 +160,6 @@ export default function DocumentEditor({
       <button type="submit" className={adminButtonClass} disabled={pending}>
         {pending ? "Guardando documento..." : documentId ? "Guardar cambios" : "Guardar borrador"}
       </button>
-    </form>
+    </LiveValidation>
   );
 }
