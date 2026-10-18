@@ -18,6 +18,8 @@ import {
 import CopyPostButton from "@/components/resources/CopyPostButton";
 import { getWhatsAppUrl, siteConfig } from "@/config/site";
 
+const isDevelopmentEnvironment = process.env.NODE_ENV === "development";
+
 export const metadata: Metadata = {
   title: "Recursos, herramientas y transparencia",
   description: `Conoce el proceso de soporte, las herramientas de referencia, alternativas de software y guías de ${siteConfig.name} en Quillota.`,
@@ -135,9 +137,11 @@ export default function ResourcesPage() {
                 <Link href="/consultas?tema=Diagnóstico%20informático" className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover">
                   Consultar por un diagnóstico <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <a href="#guias" className="inline-flex min-h-12 items-center rounded-lg border border-white/15 px-5 py-3 text-sm font-semibold text-gray-200 transition hover:bg-white/[0.05]">
-                  Explorar guías
-                </a>
+                {isDevelopmentEnvironment && (
+                  <a href="#guias" className="inline-flex min-h-12 items-center rounded-lg border border-white/15 px-5 py-3 text-sm font-semibold text-gray-200 transition hover:bg-white/[0.05]">
+                    Explorar guías
+                  </a>
+                )}
               </div>
             </div>
             <aside className="rounded-2xl border border-white/10 bg-background/70 p-5 backdrop-blur sm:p-6">
@@ -165,7 +169,7 @@ export default function ResourcesPage() {
               ["Herramientas", "#herramientas"],
               ["Software", "#software"],
               ["Transparencia", "#transparencia"],
-              ["Guías", "#guias"],
+              ...(isDevelopmentEnvironment ? [["Guías", "#guias"]] : []),
             ].map(([label, href]) => (
               <a key={href} href={href} className="shrink-0 rounded-full border border-white/10 px-4 py-2 text-gray-300 transition hover:border-primary-light/30 hover:text-white">
                 {label}
@@ -270,32 +274,34 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section id="guias" className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading eyebrow="Guías para compartir" title="Consejos prácticos para cuidar tus equipos." description="Textos listos para reutilizar en Google Business, estados de WhatsApp y redes locales. Puedes copiarlos y adaptarlos al formato." />
-            <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-white/10 px-3 py-2 text-xs text-gray-400 sm:self-auto">
-              <BookOpen className="h-4 w-4 text-primary-light" aria-hidden="true" /> 2 ideas por semana · 4 semanas
-            </span>
+      {isDevelopmentEnvironment && (
+        <section id="guias" className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading eyebrow="Guías para compartir" title="Consejos prácticos para cuidar tus equipos." description="Textos listos para reutilizar en Google Business, estados de WhatsApp y redes locales. Puedes copiarlos y adaptarlos al formato." />
+              <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-white/10 px-3 py-2 text-xs text-gray-400 sm:self-auto">
+                <BookOpen className="h-4 w-4 text-primary-light" aria-hidden="true" /> 2 ideas por semana · 4 semanas
+              </span>
+            </div>
+            <div className="mt-8 grid gap-4 lg:grid-cols-2">
+              {posts.map((post) => (
+                <article key={post.title} className="flex h-full flex-col rounded-2xl border border-white/[0.09] bg-white/[0.025] p-5 sm:p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-xs font-semibold uppercase tracking-[0.15em] text-primary-light">{post.week}</span>
+                    {post.isTemplate && <span className="rounded-full border border-amber-200/20 bg-amber-100/[0.05] px-2.5 py-1 text-[11px] font-medium text-amber-100">Plantilla · completar con caso real</span>}
+                  </div>
+                  <h3 className="mt-3 text-lg font-semibold text-white">{post.title}</h3>
+                  <p className="mt-4 flex-1 whitespace-pre-line text-sm leading-6 text-gray-300">{post.copy}</p>
+                  <CopyPostButton content={post.copy} />
+                </article>
+              ))}
+            </div>
+            <p className="mt-5 text-xs leading-5 text-gray-500">
+              Revisa cada texto antes de publicarlo. Los casos se comparten solo si son reales, verificables y autorizados; elimina cualquier dato o imagen que permita identificar a una persona o equipo.
+            </p>
           </div>
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            {posts.map((post) => (
-              <article key={post.title} className="flex h-full flex-col rounded-2xl border border-white/[0.09] bg-white/[0.025] p-5 sm:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="text-xs font-semibold uppercase tracking-[0.15em] text-primary-light">{post.week}</span>
-                  {post.isTemplate && <span className="rounded-full border border-amber-200/20 bg-amber-100/[0.05] px-2.5 py-1 text-[11px] font-medium text-amber-100">Plantilla · completar con caso real</span>}
-                </div>
-                <h3 className="mt-3 text-lg font-semibold text-white">{post.title}</h3>
-                <p className="mt-4 flex-1 whitespace-pre-line text-sm leading-6 text-gray-300">{post.copy}</p>
-                <CopyPostButton content={post.copy} />
-              </article>
-            ))}
-          </div>
-          <p className="mt-5 text-xs leading-5 text-gray-500">
-            Revisa cada texto antes de publicarlo. Los casos se comparten solo si son reales, verificables y autorizados; elimina cualquier dato o imagen que permita identificar a una persona o equipo.
-          </p>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="border-t border-white/[0.08] bg-[#0a1120] px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 rounded-2xl border border-primary-light/15 bg-primary-light/[0.035] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
