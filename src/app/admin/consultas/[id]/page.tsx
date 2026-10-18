@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import InquiryNoteForm from "@/components/admin/InquiryNoteForm";
 import InquiryStatusForm from "@/components/admin/InquiryStatusForm";
+import ProposalDraftFromInquiryButton from "@/components/admin/ProposalDraftFromInquiryButton";
 import { getServiceInquiry, AdminRecordNotFoundError } from "@/lib/admin/queries";
 import {
   serviceInquirySourceLabels,
@@ -61,6 +62,23 @@ export default async function ServiceInquiryDetailPage({
             <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-300">{inquiry.message}</p>
             <p className="mt-5 text-xs text-gray-500">Creada: {new Date(inquiry.created_at).toLocaleString("es-CL")}</p>
           </section>
+
+          {inquiry.request_details.equipment_type && (
+            <section className="rounded-2xl border border-primary-light/20 bg-primary-light/[0.035] p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-light">Solicitud de cotización</p>
+              <h2 className="mt-2 font-semibold text-white">{inquiry.request_details.equipment_type}</h2>
+              <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+                <div><dt className="text-xs text-gray-500">Marca y modelo</dt><dd className="mt-1 text-gray-200">{inquiry.request_details.brand_model || "No indicado"}</dd></div>
+                <div><dt className="text-xs text-gray-500">Modalidad preferida</dt><dd className="mt-1 text-gray-200">{inquiry.request_details.modality || "Por conversar"}</dd></div>
+                <div><dt className="text-xs text-gray-500">Comuna o sector</dt><dd className="mt-1 text-gray-200">{inquiry.request_details.location || "No indicado"}</dd></div>
+                <div className="sm:col-span-2"><dt className="text-xs text-gray-500">Tareas solicitadas</dt><dd className="mt-1 whitespace-pre-wrap text-gray-200">{inquiry.request_details.tasks?.join("\n") || "No indicadas"}</dd></div>
+              </dl>
+              {mayManageInquiries
+                && hasAdminPermission(profile.role, "clients.manage")
+                && hasAdminPermission(profile.role, "documents.manage")
+                && <ProposalDraftFromInquiryButton inquiryId={inquiry.id} />}
+            </section>
+          )}
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
             <h2 className="font-semibold text-white">Historial interno</h2>

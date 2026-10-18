@@ -114,7 +114,7 @@ export const servicesData: ServiceItem[] = [
     icon: HardDriveUpload,
     title: "Respaldos y recuperación",
     description:
-      "Recuperamos fotos, documentos, WhatsApp y correo en la nube o disco externo para que tus recuerdos y archivos no se pierdan.",
+      "Te orientamos para respaldar o trasladar fotos, documentos y correo. La posibilidad de copiar o recuperar archivos depende del estado del equipo y se evalúa antes de autorizar.",
   },
   {
     icon: ShieldCheck,

@@ -22,6 +22,7 @@ import {
   Wifi,
 } from "lucide-react";
 import { getWhatsAppUrl, siteConfig } from "@/config/site";
+import QuoteRequestForm from "@/components/experience/QuoteRequestForm";
 
 const troubleshootingGuides = {
   startup: {
@@ -243,9 +244,9 @@ export default function PublicExperience() {
                 Modalidad preferida
                 <select value={modality} onChange={(event) => setModality(event.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-white/10 bg-background px-3 text-sm text-white focus:border-primary-light focus:outline-none">
                   <option>Por conversar</option>
-                  <option>Remota, si es adecuada</option>
+                  <option>Remota</option>
                   <option>Presencial en Quillota</option>
-                  <option>Consultar cobertura fuera de Quillota</option>
+                  <option>Fuera de Quillota</option>
                 </select>
               </label>
             </div>
@@ -275,6 +276,9 @@ export default function PublicExperience() {
               Prefiero el formulario web
             </Link>
           </aside>
+        </div>
+        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-7">
+          <QuoteRequestForm equipmentType={device} modality={modality} selectedWork={selectedWork} />
         </div>
       </section>
 
