@@ -1,5 +1,6 @@
 "use server";
 
+import { createHash, randomBytes } from "node:crypto";
 import { Resend } from "resend";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -16,6 +17,11 @@ export type DocumentSaveState = {
 export type DocumentEmailState = {
   error?: string;
   success?: string;
+};
+
+export type ProposalDraftState = {
+  error?: string;
+  documentId?: string;
 };
 
 async function logDocumentDelivery(
@@ -46,7 +52,13 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-function documentHtml(document: ServiceDocumentRecord, clientName: string) {
+const proposalCurrencyFields = new Set(["mano_obra", "repuestos_licencias", "traslado", "total"]);
+
+function documentHtml(
+  document: ServiceDocumentRecord,
+  clientName: string,
+  proposalApprovalUrl?: string,
+) {
   const template = getDocumentTemplate(document.template_id);
   if (!template) throw new Error("El tipo de documento guardado ya no está disponible.");
 
@@ -54,7 +66,10 @@ function documentHtml(document: ServiceDocumentRecord, clientName: string) {
     const fields = (section.fields ?? []).map((fieldName) => {
       const field = template.fields.find((field) => field.name === fieldName);
       if (!field) return "";
-      const value = document.data[fieldName]?.trim() || "No indicado";
+      const rawValue = document.data[fieldName]?.trim() ?? "";
+      const value = proposalCurrencyFields.has(fieldName) && /^\d+$/.test(rawValue)
+        ? new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(Number(rawValue))
+        : rawValue || "No indicado";
       return `<p><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(value).replaceAll("\n", "<br>")}</p>`;
     }).join("");
     const paragraphs = (section.paragraphs ?? [])
@@ -71,6 +86,12 @@ function documentHtml(document: ServiceDocumentRecord, clientName: string) {
       </header>
       <h1 style="font-size:20px">${escapeHtml(template.title)}</h1>
       ${sections}
+      ${proposalApprovalUrl ? `<section style="margin-top:24px;padding:16px;background:#f0f9fa;border:1px solid #b6e2e5;border-radius:8px">
+        <h2 style="margin-top:0;font-size:18px">Revisa y responde la propuesta</h2>
+        <p>El enlace seguro permite aceptar o rechazar esta propuesta hasta el ${escapeHtml(document.data.valida_hasta)}. La aceptación deja constancia de tu autorización para el alcance y total indicados; no autoriza trabajos adicionales.</p>
+        <p><a href="${escapeHtml(proposalApprovalUrl)}" style="display:inline-block;padding:12px 18px;background:#087a8a;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold">Revisar propuesta</a></p>
+        <p style="font-size:12px;color:#555">Si no esperabas este correo, no uses el enlace y comunícate con Zipek por un canal que ya conozcas.</p>
+      </section>` : ""}
       <footer style="border-top:1px solid #ccc;margin-top:28px;padding-top:12px;font-size:12px">
         ZIPEK TECNOLOGÍA SpA · Quillota, Región de Valparaíso
       </footer>
@@ -127,6 +148,41 @@ export async function saveServiceDocumentAction(
     data[field.name] = value;
   }
 
+  if (template.id === "service-proposal") {
+    const amountFields = ["mano_obra", "repuestos_licencias", "traslado"] as const;
+    let total = 0;
+    let hasAmount = false;
+    for (const field of amountFields) {
+      const amount = data[field];
+      if (!amount) continue;
+      if (!/^\d{1,9}$/.test(amount)) {
+        return { error: "Ingresa los costos en pesos chilenos como números enteros, sin puntos ni decimales." };
+      }
+      hasAmount = true;
+      total += Number(amount);
+    }
+    if (!hasAmount || total > 999_999_999) {
+      return { error: "Ingresa al menos un costo y verifica que el total no supere $999.999.999." };
+    }
+    data.total = String(total);
+
+    const expiry = data.valida_hasta;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(expiry) || Number.isNaN(Date.parse(`${expiry}T00:00:00Z`))) {
+      return { error: "Indica una fecha de vigencia válida para la propuesta." };
+    }
+    const expiryDate = new Date(`${expiry}T00:00:00Z`);
+    if (expiryDate.toISOString().slice(0, 10) !== expiry || expiry < new Date().toISOString().slice(0, 10)) {
+      return { error: "La propuesta debe vencer hoy o en una fecha futura." };
+    }
+    const proposalDate = new Date(`${data.fecha}T00:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.fecha)
+      || Number.isNaN(proposalDate.getTime())
+      || proposalDate.toISOString().slice(0, 10) !== data.fecha
+      || expiry < data.fecha) {
+      return { error: "Verifica las fechas de emisión y vigencia de la propuesta." };
+    }
+  }
+
   if (documentId) {
     const { data: saved, error } = await supabase
       .from("service_documents")
@@ -164,6 +220,36 @@ export async function saveServiceDocumentAction(
 
   revalidatePath("/admin/documentos");
   return { documentId: saved.id };
+}
+
+export async function createServiceProposalDraftFromInquiryAction(
+  _state: ProposalDraftState,
+  formData: FormData,
+): Promise<ProposalDraftState> {
+  const { supabase } = await requireStaff("documents.manage");
+  const inquiryId = String(formData.get("inquiry_id") ?? "");
+  if (!uuidSchema.safeParse(inquiryId).success) {
+    return { error: "La referencia de consulta no es válida." };
+  }
+
+  const { data, error } = await supabase.rpc("create_service_proposal_draft_from_inquiry", {
+    p_inquiry_id: inquiryId,
+  });
+  if (error) {
+    console.error("No se pudo crear el borrador de cotización desde la consulta.", error);
+    return {
+      error: error.code === "42501"
+        ? "Tu perfil no tiene permisos para crear un cliente y una propuesta desde esta consulta."
+        : "No se pudo crear la propuesta. Verifica que la migración de cotizaciones esté aplicada y que la consulta tenga datos de contacto autorizados.",
+    };
+  }
+  if (typeof data !== "string" || !uuidSchema.safeParse(data).success) {
+    throw new Error("La base de datos no devolvió el identificador de la propuesta.");
+  }
+
+  revalidatePath("/admin/documentos");
+  revalidatePath(`/admin/consultas/${inquiryId}`);
+  return { documentId: data };
 }
 
 export async function sendServiceDocumentEmailAction(
@@ -207,6 +293,65 @@ export async function sendServiceDocumentEmailAction(
     return { error: `Completa antes de enviar: ${missingFields.map((field) => field.label).join(", ")}.` };
   }
 
+  let proposalApprovalUrl: string | undefined;
+  if (document.template_id === "service-proposal") {
+    const amountFields = ["mano_obra", "repuestos_licencias", "traslado"] as const;
+    const amounts = amountFields.map((field) => document.data[field] ?? "");
+    if (amounts.some((amount) => amount && !/^\d{1,9}$/.test(amount))
+      || !amounts.some((amount) => amount)) {
+      return { error: "La propuesta tiene costos incompletos o inválidos. Corrige el borrador antes de enviarlo." };
+    }
+    const calculatedTotal = amounts.reduce((total, amount) => total + Number(amount || 0), 0);
+    if (calculatedTotal > 999_999_999 || Number(document.data.total) !== calculatedTotal) {
+      return { error: "El total de la propuesta no coincide con sus costos. Guarda los cambios y vuelve a intentarlo." };
+    }
+
+    const expiry = document.data.valida_hasta;
+    const expiresOn = new Date(`${expiry}T00:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(expiry)
+      || Number.isNaN(expiresOn.getTime())
+      || expiresOn.toISOString().slice(0, 10) !== expiry
+      || expiry < new Date().toISOString().slice(0, 10)
+      || expiry < document.data.fecha) {
+      return { error: "La vigencia de la propuesta debe ser hoy o una fecha futura." };
+    }
+    const proposalDateValue = document.data.fecha ?? "";
+    const proposalDate = new Date(`${proposalDateValue}T00:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(proposalDateValue)
+      || Number.isNaN(proposalDate.getTime())
+      || proposalDate.toISOString().slice(0, 10) !== proposalDateValue
+      || expiry < proposalDateValue) {
+      return { error: "Verifica la fecha de emisión y vigencia de la propuesta antes de enviarla." };
+    }
+
+    const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!publicSiteUrl) {
+      return { error: "Configura NEXT_PUBLIC_SITE_URL antes de enviar una propuesta con aprobación digital." };
+    }
+    let siteOrigin: URL;
+    try {
+      siteOrigin = new URL(publicSiteUrl);
+    } catch {
+      return { error: "NEXT_PUBLIC_SITE_URL no es una URL válida." };
+    }
+    if (siteOrigin.protocol !== "https:" && siteOrigin.hostname !== "localhost") {
+      return { error: "NEXT_PUBLIC_SITE_URL debe usar HTTPS para habilitar la aprobación digital." };
+    }
+
+    const token = randomBytes(32).toString("base64url");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    const { error: approvalError } = await supabase.rpc("create_service_proposal_approval", {
+      p_document_id: document.id,
+      p_token_hash: tokenHash,
+      p_expires_on: expiry,
+    });
+    if (approvalError) {
+      console.error("No se pudo generar el enlace seguro de aprobación de la propuesta.", approvalError);
+      return { error: "No se pudo preparar la aprobación digital. Revisa la migración de cotizaciones e inténtalo nuevamente." };
+    }
+    proposalApprovalUrl = new URL(`/propuesta#${token}`, siteOrigin).toString();
+  }
+
   let orderNumber: string | undefined;
   if (document.order_id) {
     const { data: order, error: orderError } = await supabase
@@ -238,7 +383,7 @@ export async function sendServiceDocumentEmailAction(
       from: sender,
       to: recipientResult.data,
       subject: `${template.title} · Zipek Tecnología`,
-      html: documentHtml(document, client.full_name),
+      html: documentHtml(document, client.full_name, proposalApprovalUrl),
       attachments: [{
         filename: `${template.id}-${document.id.slice(0, 8)}.pdf`,
         content: Buffer.from(pdf).toString("base64"),

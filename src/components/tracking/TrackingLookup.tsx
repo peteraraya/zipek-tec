@@ -16,6 +16,14 @@ interface TrackingData {
 
 const tokenPattern = /^[A-Za-z0-9_-]{43}$/;
 const orderNumberPattern = /^ZI-\d{4}-\d+$/i;
+const publicStatusSteps: Array<{ status: ServiceStatus; label: string }> = [
+  { status: "received", label: "Recibido" },
+  { status: "diagnosis", label: "Evaluación" },
+  { status: "awaiting_approval", label: "Tu autorización" },
+  { status: "in_progress", label: "En trabajo" },
+  { status: "ready", label: "Pruebas y entrega" },
+  { status: "delivered", label: "Entregado" },
+];
 
 function extractTrackingToken(value: string) {
   const input = value.trim();
@@ -184,6 +192,37 @@ export default function TrackingLookup() {
             </div>
             <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">Actualización automática</span>
           </div>
+          {result.status === "cancelled" ? (
+            <p className="mt-6 rounded-lg border border-amber-300/20 bg-amber-300/[0.06] p-4 text-sm text-amber-100">
+              Este servicio figura como cancelado. Revisa las actualizaciones o contáctanos si necesitas aclarar algo.
+            </p>
+          ) : (
+            <ol aria-label="Etapas del servicio" className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              {publicStatusSteps.map(({ status, label }, index) => {
+                const currentIndex = publicStatusSteps.findIndex((step) => step.status === result.status);
+                const isComplete = index < currentIndex;
+                const isCurrent = index === currentIndex;
+                return (
+                  <li
+                    key={status}
+                    aria-current={isCurrent ? "step" : undefined}
+                    className={`rounded-lg border p-3 text-center text-xs ${
+                      isCurrent
+                        ? "border-primary-light/50 bg-primary-light/[0.08] text-white"
+                        : isComplete
+                          ? "border-emerald-300/20 bg-emerald-300/[0.04] text-emerald-100"
+                          : "border-white/[0.08] text-gray-500"
+                    }`}
+                  >
+                    <span className="mx-auto grid h-6 w-6 place-items-center rounded-full border border-current text-[10px] font-semibold">
+                      {isComplete ? "✓" : String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="mt-2 block leading-4">{label}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
           {result.public_message && <p className="mt-5 rounded-lg bg-white/5 p-4 text-sm text-gray-200">{result.public_message}</p>}
           <p className="mt-4 text-xs text-gray-500">Última actualización: {new Date(result.updated_at).toLocaleString("es-CL")}. Se consulta cada 15 segundos.</p>
           <ol className="mt-7 space-y-4 border-l border-white/10 pl-5">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { z } from "zod";
 import DocumentEmailForm from "@/components/admin/DocumentEmailForm";
 import PrintButton from "@/components/admin/PrintButton";
 import { siteConfig } from "@/config/site";
@@ -7,13 +8,20 @@ import { AdminRecordNotFoundError, getServiceDocument, getServiceOrder } from "@
 import { getDocumentTemplate } from "@/lib/admin/document-templates";
 import { hasAdminPermission, requireStaff } from "@/lib/admin/auth";
 
+const proposalApprovalStatusSchema = z.object({
+  status: z.enum(["pending", "accepted", "declined", "expired"]),
+  expires_on: z.string(),
+  signer_name: z.string().nullable(),
+  responded_at: z.string().nullable(),
+});
+
 export default async function ServiceDocumentDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { profile } = await requireStaff("documents.read");
+  const { supabase, profile } = await requireStaff("documents.read");
   let record;
   try {
     record = await getServiceDocument(id);
@@ -27,6 +35,25 @@ export default async function ServiceDocumentDetailPage({
   const associatedOrder = record.document.order_id
     ? await getServiceOrder(record.document.order_id)
     : null;
+  let proposalApproval: {
+    status: "pending" | "accepted" | "declined" | "expired";
+    expires_on: string;
+    signer_name: string | null;
+    responded_at: string | null;
+  } | null = null;
+  if (record.document.template_id === "service-proposal") {
+    const { data, error } = await supabase.rpc("get_service_proposal_approval_status", {
+      p_document_id: id,
+    });
+    if (error) throw new Error(`No se pudo cargar la aprobación de la propuesta: ${error.message}`);
+    if (Array.isArray(data) && data.length > 0) {
+      const parsedApproval = proposalApprovalStatusSchema.safeParse(data[0]);
+      if (!parsedApproval.success) {
+        throw new Error("La base de datos devolvió un estado de aprobación no válido.");
+      }
+      proposalApproval = parsedApproval.data;
+    }
+  }
 
   return (
     <main className="mx-auto max-w-4xl">
@@ -60,6 +87,29 @@ export default async function ServiceDocumentDetailPage({
               ? `Enviado a ${record.document.sent_to} el ${new Date(record.document.sent_at ?? "").toLocaleString("es-CL")}.`
               : "Aún no se ha enviado por correo."}
           </p>
+          {record.document.source_inquiry_id && (
+            <Link href={`/admin/consultas/${record.document.source_inquiry_id}`} className="mt-3 inline-flex text-sm font-medium text-primary-light hover:text-white">
+              Ver solicitud de cotización
+            </Link>
+          )}
+          {proposalApproval && (
+            <div className="mt-4 rounded-lg border border-white/10 bg-black/10 p-3 text-sm">
+              <p className="font-medium text-gray-200">
+                Aprobación: {{
+                  pending: "Pendiente",
+                  accepted: "Aceptada",
+                  declined: "Rechazada",
+                  expired: "Vencida",
+                }[proposalApproval.status]}
+              </p>
+              <p className="mt-1 text-xs text-gray-400">
+                Vigente hasta {new Date(`${proposalApproval.expires_on}T12:00:00`).toLocaleDateString("es-CL")}
+                {proposalApproval.responded_at && proposalApproval.signer_name
+                  ? ` · ${proposalApproval.signer_name} · ${new Date(proposalApproval.responded_at).toLocaleString("es-CL")}`
+                  : ""}
+              </p>
+            </div>
+          )}
         </div>
         {hasAdminPermission(profile.role, "documents.manage") && <DocumentEmailForm
           documentId={id}

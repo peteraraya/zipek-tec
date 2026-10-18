@@ -11,7 +11,8 @@ import {
 const siteShortName = "ZIPEK";
 const businessDescriptor = "Tecnología";
 const siteName = `${siteShortName} ${businessDescriptor}`;
-const siteDomain = "gmail.com";
+const siteDomain = "zipek.cl";
+const contactEmail = "piteraraya@gmail.com";
 const serviceTagline = "Soporte informático legal y cercano";
 const logoPath = "/logo/logo_zipek-tecnologia.png";
 const serviceCity = "Quillota";
@@ -34,7 +35,7 @@ export const siteConfig = {
   description:
     `Soporte informático para hogares y pymes en ${serviceCity}: diagnóstico claro, precio acordado antes de empezar y alternativas de software legales.`,
   contact: {
-    email: `piteraraya@${siteDomain}`,
+    email: contactEmail,
     phone: "+56 9 5764 2162",
     location: `${serviceCity}, ${serviceRegion}, ${serviceCountry}`,
     city: serviceCity,
@@ -91,6 +92,8 @@ export const features = {
 export const navLinks = [
   { title: "Inicio", href: "/#inicio" },
   { title: "Servicios", href: "/#servicios" },
+  { title: "Centro digital", href: "/experiencia" },
+  { title: "Recursos", href: "/recursos" },
   ...(features.enablePricing ? [{ title: "Planes", href: "/#planes" }] : []),
   { title: "Seguimiento", href: "/seguimiento" },
   { title: "Contacto", href: "/#contacto" },
@@ -113,7 +116,7 @@ export const servicesData: ServiceItem[] = [
     icon: HardDriveUpload,
     title: "Respaldos y recuperación",
     description:
-      "Recuperamos fotos, documentos, WhatsApp y correo en la nube o disco externo para que tus recuerdos y archivos no se pierdan.",
+      "Te orientamos para respaldar o trasladar fotos, documentos y correo. La posibilidad de copiar o recuperar archivos depende del estado del equipo y se evalúa antes de autorizar.",
   },
   {
     icon: ShieldCheck,

@@ -127,6 +127,30 @@ export const publicInquirySchema = z.object({
   ...inquiryContactFields,
 }).strict().superRefine(validateInquiryContact);
 
+export const publicQuoteRequestSchema = z.object({
+  contact_name: z.string().trim().min(2, "Ingresa tu nombre.").max(160),
+  contact_phone: z.string().trim().min(6, "Ingresa un teléfono válido.").max(40),
+  contact_consent: z.literal(true, "Autoriza el uso de tus datos para responder la solicitud."),
+  contact_email: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().trim().email("Ingresa un correo válido.").max(254).optional(),
+  ),
+  request_details: z.object({
+    equipment_type: z.enum(["Notebook", "Computador de escritorio", "Impresora o red", "Otro equipo"]),
+    brand_model: optionalText(120),
+    issue: z.string().trim().min(10, "Describe el problema con al menos 10 caracteres.").max(2000),
+    modality: z.enum(["Por conversar", "Remota", "Presencial en Quillota", "Fuera de Quillota"]),
+    location: optionalText(120),
+    tasks: z.array(z.enum([
+      "Revisión y diagnóstico",
+      "Respaldo o traslado de archivos",
+      "Instalación o configuración de software",
+      "Conectividad, Wi-Fi o impresora",
+      "Orientación de seguridad",
+    ])).min(1, "Selecciona al menos una tarea.").max(5),
+  }).strict(),
+}).strict();
+
 export const whatsappInquirySchema = z.object({
   topic: z.string().trim().min(3, "Indica el tema de la consulta.").max(100),
   message: z.string().trim().min(10, "Registra el contenido de la consulta.").max(3000),
