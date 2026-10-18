@@ -10,8 +10,8 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f1f4f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#080d19" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f7fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
   ],
   width: "device-width",
   initialScale: 1,
