@@ -5,152 +5,188 @@ import { Accessibility, Type, Contrast, Palette, Link as LinkIcon, RotateCcw, X 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+type AccessibilitySettings = {
+  textSize: 0 | 1 | 2;
+  highContrast: boolean;
+  grayscale: boolean;
+  underlineLinks: boolean;
+  readableSpacing: boolean;
+};
+
+const defaultSettings: AccessibilitySettings = {
+  textSize: 0,
+  highContrast: false,
+  grayscale: false,
+  underlineLinks: false,
+  readableSpacing: false,
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function parseSettings(value: string | null): AccessibilitySettings {
+  if (!value) return defaultSettings;
+
+  const parsed: unknown = JSON.parse(value);
+  if (!isRecord(parsed)) return defaultSettings;
+
+  const textSize = parsed.textSize === 1 || parsed.textSize === 2 ? parsed.textSize : 0;
+
+  return {
+    textSize,
+    highContrast: parsed.highContrast === true,
+    grayscale: parsed.grayscale === true,
+    underlineLinks: parsed.underlineLinks === true,
+    readableSpacing: parsed.readableSpacing === true || parsed.dyslexia === true,
+  };
+}
+
 export default function AccessibilityWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [settings, setSettings] = useState({
-    textSize: 0, // 0: default, 1: lg, 2: xl
-    highContrast: false,
-    grayscale: false,
-    underlineLinks: false,
-    dyslexia: false,
+  const [settings, setSettings] = useState<AccessibilitySettings>(() => {
+    if (typeof window === "undefined") return defaultSettings;
+
+    try {
+      return parseSettings(window.localStorage.getItem("a11y-settings"));
+    } catch (error) {
+      console.error("Failed to load accessibility settings from localStorage", error);
+      return defaultSettings;
+    }
   });
 
-  // Load settings from localStorage
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      try {
-        const savedSettings = localStorage.getItem("a11y-settings");
-        if (savedSettings) {
-          setSettings(JSON.parse(savedSettings));
-        }
-      } catch (e) {
-        console.error("Failed to load accessibility settings from localStorage", e);
-      }
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  // Save settings to localStorage and apply classes to HTML element
   useEffect(() => {
     try {
       localStorage.setItem("a11y-settings", JSON.stringify(settings));
-    } catch (e) {
-      console.error("Failed to save accessibility settings to localStorage", e);
+    } catch (error) {
+      console.error("Failed to save accessibility settings to localStorage", error);
     }
 
     const html = document.documentElement;
-    
-    // Clear previous classes
-    html.classList.remove("a11y-text-lg", "a11y-text-xl", "a11y-high-contrast", "a11y-grayscale", "a11y-links-underline", "a11y-dyslexia");
-    
-    // Apply new classes based on state
+    html.classList.remove(
+      "a11y-text-lg",
+      "a11y-text-xl",
+      "a11y-high-contrast",
+      "a11y-grayscale",
+      "a11y-links-underline",
+      "a11y-readable-spacing",
+      "a11y-dyslexia",
+    );
+
     if (settings.textSize === 1) html.classList.add("a11y-text-lg");
     if (settings.textSize === 2) html.classList.add("a11y-text-xl");
     if (settings.highContrast) html.classList.add("a11y-high-contrast");
     if (settings.grayscale) html.classList.add("a11y-grayscale");
     if (settings.underlineLinks) html.classList.add("a11y-links-underline");
-    if (settings.dyslexia) html.classList.add("a11y-dyslexia");
-    
+    if (settings.readableSpacing) html.classList.add("a11y-readable-spacing");
   }, [settings]);
 
   const toggleTextSize = () => {
-    setSettings(prev => ({ ...prev, textSize: (prev.textSize + 1) % 3 }));
+    setSettings(prev => {
+      const textSize: AccessibilitySettings["textSize"] =
+        prev.textSize === 0 ? 1 : prev.textSize === 1 ? 2 : 0;
+      return { ...prev, textSize };
+    });
   };
 
-  const toggleSetting = (key: keyof typeof settings) => {
+  const toggleSetting = (key: Exclude<keyof AccessibilitySettings, "textSize">) => {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const resetSettings = () => {
-    setSettings({
-      textSize: 0,
-      highContrast: false,
-      grayscale: false,
-      underlineLinks: false,
-      dyslexia: false,
-    });
+    setSettings(defaultSettings);
   };
 
   return (
     <div className="fixed bottom-2 right-2 z-50 sm:bottom-6 sm:right-6">
       {isOpen && (
-        <div className="absolute bottom-16 right-0 mb-2 w-72 rounded-2xl border border-white/10 bg-background/95 backdrop-blur-xl p-4 shadow-2xl">
-          <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
-            <h3 className="font-semibold text-white flex items-center gap-2">
-              <Accessibility className="w-5 h-5 text-primary-light" />
+        <section
+          id="accessibility-panel"
+          aria-label="Preferencias de accesibilidad"
+          className="absolute bottom-16 right-0 mb-2 max-h-[min(75vh,32rem)] w-[min(18rem,calc(100vw-1rem))] overflow-y-auto rounded-2xl border border-white/10 bg-background p-4 text-foreground shadow-2xl"
+        >
+          <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+            <h2 className="flex items-center gap-2 font-semibold">
+              <Accessibility aria-hidden="true" className="h-5 w-5 text-primary-light" />
               Accesibilidad
-            </h3>
-            <button 
+            </h2>
+            <button
+              type="button"
               onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light"
               aria-label="Cerrar menú de accesibilidad"
             >
-              <X className="w-5 h-5" />
+              <X aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
           
           <div className="space-y-2">
-            <Button 
+            <Button
               variant={settings.textSize > 0 ? "default" : "outline"}
-              className="w-full justify-start text-sm"
+              className="h-11 w-full justify-start whitespace-normal text-left text-sm"
               onClick={toggleTextSize}
+              aria-pressed={settings.textSize > 0}
             >
-              <Type className="w-4 h-4 mr-2" />
+              <Type aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
               Tamaño de texto {settings.textSize === 1 ? "(Grande)" : settings.textSize === 2 ? "(Muy Grande)" : ""}
             </Button>
             
-            <Button 
+            <Button
               variant={settings.highContrast ? "default" : "outline"}
-              className="w-full justify-start text-sm"
+              className="h-11 w-full justify-start whitespace-normal text-left text-sm"
               onClick={() => toggleSetting("highContrast")}
+              aria-pressed={settings.highContrast}
             >
-              <Contrast className="w-4 h-4 mr-2" />
+              <Contrast aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
               Alto contraste
             </Button>
             
-            <Button 
+            <Button
               variant={settings.grayscale ? "default" : "outline"}
-              className="w-full justify-start text-sm"
+              className="h-11 w-full justify-start whitespace-normal text-left text-sm"
               onClick={() => toggleSetting("grayscale")}
+              aria-pressed={settings.grayscale}
             >
-              <Palette className="w-4 h-4 mr-2" />
+              <Palette aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
               Escala de grises
             </Button>
             
-            <Button 
+            <Button
               variant={settings.underlineLinks ? "default" : "outline"}
-              className="w-full justify-start text-sm"
+              className="h-11 w-full justify-start whitespace-normal text-left text-sm"
               onClick={() => toggleSetting("underlineLinks")}
+              aria-pressed={settings.underlineLinks}
             >
-              <LinkIcon className="w-4 h-4 mr-2" />
+              <LinkIcon aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
               Subrayar enlaces
             </Button>
 
-            <Button 
-              variant={settings.dyslexia ? "default" : "outline"}
-              className="w-full justify-start text-sm"
-              onClick={() => toggleSetting("dyslexia")}
+            <Button
+              variant={settings.readableSpacing ? "default" : "outline"}
+              className="h-11 w-full justify-start whitespace-normal text-left text-sm"
+              onClick={() => toggleSetting("readableSpacing")}
+              aria-pressed={settings.readableSpacing}
             >
-              <Type className="w-4 h-4 mr-2" />
-              Fuente para dislexia
+              <Type aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
+              Espaciado de lectura
             </Button>
           </div>
           
           <div className="mt-4 pt-3 border-t border-white/10">
-            <Button 
-              variant="ghost" 
-              className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10"
+            <Button
+              variant="ghost"
+              className="h-11 w-full whitespace-normal text-foreground"
               onClick={resetSettings}
             >
-              <RotateCcw className="w-4 h-4 mr-2" />
+              <RotateCcw aria-hidden="true" className="mr-2 h-4 w-4 shrink-0" />
               Restablecer
             </Button>
           </div>
-        </div>
+        </section>
       )}
 
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex h-12 w-12 items-center justify-center rounded-full shadow-lg shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background sm:h-14 sm:w-14",
@@ -158,8 +194,9 @@ export default function AccessibilityWidget() {
         )}
         aria-label="Abrir menú de accesibilidad"
         aria-expanded={isOpen}
+        aria-controls="accessibility-panel"
       >
-        <Accessibility className="w-6 h-6" />
+        <Accessibility aria-hidden="true" className="h-6 w-6" />
       </button>
     </div>
   );

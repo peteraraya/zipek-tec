@@ -2,18 +2,20 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #080d19;
-  --foreground: #f1f4f7;
+  --background: #0b1220;
+  --foreground: #f1f5f9;
   --primary: #087a8a;
   --primary-hover: #056572;
-  --primary-light: #67cbd3;
-  --secondary: #6552a3;
-  --accent: #a65cd2;
-  --surface: #0d1524;
-  --surface-raised: #111b2d;
-  --border-subtle: rgba(167, 190, 207, 0.14);
-  --text-muted: #aab7c4;
-  --text-subtle: #aab7c4;
+  --primary-light: #63d2d0;
+  --secondary: #b8a8f5;
+  --secondary-foreground: #0b1220;
+  --accent: #f2b66d;
+  --surface: #111b2d;
+  --surface-raised: #18263a;
+  --border-subtle: #58687d;
+  --text-muted: #b4c1cf;
+  --text-subtle: #b4c1cf;
+  --focus-ring: #f2b66d;
 }
 
 @theme inline {
@@ -23,6 +25,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
   --font-heading: var(--font-manrope), var(--font-inter), Arial, Helvetica, sans-serif;
@@ -31,18 +34,20 @@
 
 html.light {
   color-scheme: light;
-  --background: #f5f7f8;
+  --background: #f5f7fa;
   --foreground: #17212b;
-  --primary: #086a78;
-  --primary-hover: #075865;
+  --primary: #075e6b;
+  --primary-hover: #064b56;
   --primary-light: #075e6b;
-  --secondary: #6552a3;
-  --accent: #7b3ca3;
+  --secondary: #51418a;
+  --secondary-foreground: #ffffff;
+  --accent: #8a4b08;
   --surface: #ffffff;
   --surface-raised: #edf2f4;
-  --border-subtle: rgba(23, 33, 43, 0.14);
-  --text-muted: #465563;
-  --text-subtle: #52616e;
+  --border-subtle: #7b8794;
+  --text-muted: #4b5968;
+  --text-subtle: #526174;
+  --focus-ring: #075e6b;
 }
 
 html.dark {
@@ -67,14 +72,11 @@ h4 {
 }
 
 .text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(to right, var(--primary-light), var(--primary));
+  color: var(--primary-light);
 }
 
 .bg-gradient-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: var(--primary);
 }
 
 .public-site {
@@ -85,6 +87,10 @@ h4 {
 
 .public-site .text-gray-500 {
   color: var(--text-subtle);
+}
+
+.public-site [class*="border-white/"] {
+  border-color: var(--border-subtle);
 }
 
 .public-site .text-gradient {
@@ -142,7 +148,7 @@ h4 {
 }
 
 .public-site :focus-visible {
-  outline: 2px solid var(--primary-light);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
@@ -157,14 +163,17 @@ h4 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .animate-retro-grid {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 
   .public-site .help-tour-target {
-    scroll-behavior: auto;
-    transition: none;
+    transition: none !important;
   }
 }
 
@@ -248,6 +257,60 @@ html.light .public-site [role="complementary"] .text-gray-400 {
   color: #f1f4f7;
 }
 
+html.light .public-site #help-center-dialog,
+html.light .public-site #help-tour-dialog {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog .text-white,
+html.light .public-site #help-tour-dialog .text-white {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog .text-gray-200,
+html.light .public-site #help-tour-dialog .text-gray-200 {
+  color: #dbe4ee;
+}
+
+html.light .public-site #help-center-dialog .text-gray-300,
+html.light .public-site #help-tour-dialog .text-gray-300 {
+  color: #cbd5e1;
+}
+
+html.light .public-site #help-center-dialog .text-gray-400,
+html.light .public-site #help-tour-dialog .text-gray-400 {
+  color: #b4c1cf;
+}
+
+html.light .public-site #help-center-dialog .text-gray-500,
+html.light .public-site #help-tour-dialog .text-gray-500 {
+  color: #94a3b8;
+}
+
+html.light .public-site #help-center-dialog .text-primary-light,
+html.light .public-site #help-tour-dialog .text-primary-light {
+  color: #63d2d0;
+}
+
+html.light .public-site #help-center-dialog [class*="bg-white/"],
+html.light .public-site #help-tour-dialog [class*="bg-white/"] {
+  background-color: #18263a;
+}
+
+html.light .public-site #help-center-dialog [class*="bg-black/"],
+html.light .public-site #help-tour-dialog [class*="bg-black/"] {
+  background-color: #0b1220;
+}
+
+html.light .public-site #help-center-dialog input {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
 /* Accesibilidad */
 html.a11y-grayscale {
   filter: grayscale(100%);
@@ -255,11 +318,29 @@ html.a11y-grayscale {
 
 html.a11y-high-contrast {
   --background: #000000;
-  filter: contrast(1.5) saturate(1.2);
+  --foreground: #ffffff;
+  --primary: #00ffff;
+  --primary-hover: #00ffff;
+  --primary-light: #ffff00;
+  --secondary: #e0bfff;
+  --secondary-foreground: #000000;
+  --accent: #ffbf00;
+  --surface: #000000;
+  --surface-raised: #121212;
+  --border-subtle: rgba(255, 255, 255, 0.8);
+  --text-muted: #f0f0f0;
+  --text-subtle: #ffffff;
+  --focus-ring: #ffff00;
 }
 
-html.a11y-high-contrast * {
-  outline-color: #fff !important;
+html.a11y-high-contrast .bg-primary.text-white,
+html.a11y-high-contrast .bg-primary-hover.text-white,
+html.a11y-high-contrast a[href^="https://wa.me/"].text-white {
+  color: #000000 !important;
+}
+
+html.a11y-high-contrast .public-site :focus-visible {
+  outline-color: var(--focus-ring);
 }
 
 html.a11y-text-lg {
@@ -276,12 +357,15 @@ html.a11y-links-underline a {
   font-weight: 700 !important;
 }
 
-html.a11y-dyslexia {
-  font-family: "Comic Sans MS", "OpenDyslexic", sans-serif !important;
+html.a11y-readable-spacing body,
+html.a11y-readable-spacing .public-site {
+  letter-spacing: 0.025em;
+  word-spacing: 0.08em;
 }
 
-html.a11y-dyslexia * {
-  font-family: "Comic Sans MS", "OpenDyslexic", sans-serif !important;
+html.a11y-readable-spacing .public-site main p,
+html.a11y-readable-spacing .public-site main li {
+  line-height: 1.8;
 }
 
 @media print {
