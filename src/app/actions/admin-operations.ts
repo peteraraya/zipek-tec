@@ -47,8 +47,6 @@ const settingsSchema = z.object({
   workday_end: z.string().regex(/^\d{2}:\d{2}$/),
   timezone: z.string().min(1).max(80),
   retention_clients_days: z.preprocess((value) => value === "" ? null : value, z.coerce.number().int().min(30).max(3650).nullable()),
-  retention_inquiries_days: z.preprocess((value) => value === "" ? null : value, z.coerce.number().int().min(30).max(3650).nullable()),
-  retention_documents_days: z.preprocess((value) => value === "" ? null : value, z.coerce.number().int().min(30).max(3650).nullable()),
   retention_orders_days: z.preprocess((value) => value === "" ? null : value, z.coerce.number().int().min(30).max(3650).nullable()),
   alert_email: z.preprocess((value) => value === "" ? null : value, z.string().trim().email().max(254).nullable()),
   daily_alerts_enabled: z.preprocess((value) => value === "on", z.boolean()),
