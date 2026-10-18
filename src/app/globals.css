@@ -257,6 +257,60 @@ html.light .public-site [role="complementary"] .text-gray-400 {
   color: #f1f4f7;
 }
 
+html.light .public-site #help-center-dialog,
+html.light .public-site #help-tour-dialog {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog .text-white,
+html.light .public-site #help-tour-dialog .text-white {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog .text-gray-200,
+html.light .public-site #help-tour-dialog .text-gray-200 {
+  color: #dbe4ee;
+}
+
+html.light .public-site #help-center-dialog .text-gray-300,
+html.light .public-site #help-tour-dialog .text-gray-300 {
+  color: #cbd5e1;
+}
+
+html.light .public-site #help-center-dialog .text-gray-400,
+html.light .public-site #help-tour-dialog .text-gray-400 {
+  color: #b4c1cf;
+}
+
+html.light .public-site #help-center-dialog .text-gray-500,
+html.light .public-site #help-tour-dialog .text-gray-500 {
+  color: #94a3b8;
+}
+
+html.light .public-site #help-center-dialog .text-primary-light,
+html.light .public-site #help-tour-dialog .text-primary-light {
+  color: #63d2d0;
+}
+
+html.light .public-site #help-center-dialog [class*="bg-white/"],
+html.light .public-site #help-tour-dialog [class*="bg-white/"] {
+  background-color: #18263a;
+}
+
+html.light .public-site #help-center-dialog [class*="bg-black/"],
+html.light .public-site #help-tour-dialog [class*="bg-black/"] {
+  background-color: #0b1220;
+}
+
+html.light .public-site #help-center-dialog input {
+  color: #f1f5f9;
+}
+
+html.light .public-site #help-center-dialog input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
 /* Accesibilidad */
 html.a11y-grayscale {
   filter: grayscale(100%);

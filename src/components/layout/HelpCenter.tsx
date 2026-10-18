@@ -411,6 +411,7 @@ export default function HelpCenter() {
             onClick={closePanel}
           />
           <section
+            id="help-center-dialog"
             ref={panelRef}
             role="dialog"
             aria-modal="true"
@@ -628,6 +629,7 @@ export default function HelpCenter() {
 
       {isTouring && activeTourStep && (
         <aside
+          id="help-tour-dialog"
           ref={tourPanelRef}
           tabIndex={-1}
           aria-labelledby="help-tour-title"
