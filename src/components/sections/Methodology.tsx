@@ -12,7 +12,7 @@ export default function Methodology() {
             Nuestra <span className="text-gradient">Metodología</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Un proceso de trabajo estructurado para garantizar el éxito y seguridad de tu proyecto.
+            Un proceso ordenado para acordar alcance, condiciones y próximos pasos contigo.
           </p>
         </div>
 

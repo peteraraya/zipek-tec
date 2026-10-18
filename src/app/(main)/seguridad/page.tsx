@@ -19,12 +19,12 @@ export default function SeguridadPage() {
     {
       icon: KeyRound,
       title: "Acceso remoto solo contigo",
-      description: "Nos conectamos de forma remota únicamente en una sesión que autorizas. No guardamos tus contraseñas en el teléfono ni en papel.",
+      description: "El acceso remoto se acuerda antes de iniciar, con el alcance y la herramienta que se usarán. No envíes contraseñas ni códigos por formularios o mensajería.",
     },
     {
       icon: ShieldCheck,
-      title: "Software legal y copias temporales",
-      description: "No instalamos programas sin licencia. Usamos tus datos solo para el servicio y eliminamos las copias temporales al terminar.",
+      title: "Software y copias bajo acuerdo",
+      description: "No instalamos ni activamos software sin licencia. Si el trabajo requiere crear copias temporales, acordamos su finalidad, resguardo y devolución o eliminación al cerrar el caso.",
     },
   ];
 

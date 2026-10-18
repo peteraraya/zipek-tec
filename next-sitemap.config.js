@@ -8,6 +8,7 @@ module.exports = {
     '/admin/*',
     '/api/*',
     '/login',
+    '/propuesta',
     '/nosotros',
     '/seguimiento',
     '/consultas',

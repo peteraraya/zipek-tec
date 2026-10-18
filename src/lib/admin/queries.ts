@@ -61,7 +61,7 @@ export async function getServiceInquiries(): Promise<ServiceInquiryRecord[]> {
   const { supabase } = await requireStaff();
   const { data, error } = await supabase
     .from("service_inquiries")
-    .select("id, inquiry_number, source, status, topic, contact_name, contact_phone, contact_email, contact_consent, created_at, updated_at")
+    .select("id, inquiry_number, source, status, topic, contact_name, contact_phone, contact_email, contact_consent, request_details, created_at, updated_at")
     .order("updated_at", { ascending: false })
     .limit(200);
 
@@ -77,7 +77,7 @@ export async function getServiceInquiry(id: string): Promise<{
   const [inquiryResult, eventsResult] = await Promise.all([
     supabase
       .from("service_inquiries")
-      .select("id, inquiry_number, source, status, topic, message, contact_name, contact_phone, contact_email, contact_consent, created_at, updated_at")
+      .select("id, inquiry_number, source, status, topic, message, contact_name, contact_phone, contact_email, contact_consent, request_details, created_at, updated_at")
       .eq("id", id)
       .single(),
     supabase

@@ -51,6 +51,14 @@ export interface ServiceInquiryRecord {
   contact_phone: string | null;
   contact_email: string | null;
   contact_consent: boolean;
+  request_details: {
+    equipment_type?: string;
+    brand_model?: string;
+    issue?: string;
+    modality?: string;
+    location?: string;
+    tasks?: string[];
+  };
   created_at: string;
   updated_at: string;
 }
@@ -140,6 +148,7 @@ export interface ServiceDocumentRecord {
   id: string;
   client_id: string;
   order_id: string | null;
+  source_inquiry_id: string | null;
   template_id: string;
   data: Record<string, string>;
   status: "draft" | "sent";

@@ -40,6 +40,9 @@ export default function Footer() {
           </div>
 
           <div className="order-1 flex flex-wrap items-center justify-center gap-4 text-sm md:gap-6 lg:order-2">
+            <Link href="/recursos" className="text-gray-500 hover:text-white transition-colors">
+              Recursos y transparencia
+            </Link>
             <Link href="/privacidad" className="text-gray-500 hover:text-white transition-colors">
               Privacidad
             </Link>

@@ -9,6 +9,7 @@ import Testimonials from "@/components/sections/Testimonials";
 import FAQ from "@/components/sections/FAQ";
 import Contact from "@/components/sections/Contact";
 import ROICalculator from "@/components/sections/ROICalculator";
+import DigitalExperienceTeaser from "@/components/sections/DigitalExperienceTeaser";
 import FadeIn from "@/components/layout/FadeIn";
 import { features } from "@/config/site";
 
@@ -32,6 +33,10 @@ export default function Home() {
 
         <FadeIn>
           <Features />
+        </FadeIn>
+
+        <FadeIn>
+          <DigitalExperienceTeaser />
         </FadeIn>
 
         {features.enableMethodology && (

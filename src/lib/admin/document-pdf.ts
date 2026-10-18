@@ -75,11 +75,21 @@ function wrapText(text: string, font: PDFFont, size: number, maxWidth: number) {
   return lines;
 }
 
-function getFieldValue(value: string | undefined, type?: string) {
+function getFieldValue(value: string | undefined, type?: string, fieldName?: string) {
   const trimmed = value?.trim() ?? "";
   if (type === "checkbox") return trimmed.toLowerCase() === "sí" ? "Aceptado" : "No aceptado";
+  if (documentCurrencyFields.has(fieldName ?? "") && /^\d+$/.test(trimmed)) {
+    return new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(Number(trimmed));
+  }
   return trimmed || "No informado";
 }
+
+const documentCurrencyFields = new Set([
+  "mano_obra",
+  "repuestos_licencias",
+  "traslado",
+  "total",
+]);
 
 export async function createServiceDocumentPdf(
   document: ServiceDocumentRecord,
@@ -283,7 +293,7 @@ export async function createServiceDocumentPdf(
     const field = template.fields.find((item) => item.name === fieldName);
     if (!field) return undefined;
 
-    const value = getFieldValue(document.data[field.name], field.type);
+    const value = getFieldValue(document.data[field.name], field.type, field.name);
     const isLongText = field.type === "textarea";
     const labelSize = 7.5;
     const valueSize = isLongText ? 9 : 9.5;

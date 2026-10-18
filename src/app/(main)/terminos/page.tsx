@@ -35,7 +35,7 @@ export default function TerminosPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">4. Cotizaciones y contratación de servicios</h2>
             <p>
-              En cada atención se registra el trabajo autorizado y el precio acordado. Cualquier tarea adicional debe ser consultada y aprobada por el cliente antes de realizarse.
+              Antes de iniciar un trabajo pagado se informa por escrito el alcance y el precio propuesto, sujeto a la aceptación del cliente. Cualquier tarea adicional o cambio de precio debe consultarse y aprobarse antes de realizarse. Una solicitud o una cotización no confirma disponibilidad ni agenda hasta que ambas partes la coordinen.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">5. Enlaces a sitios de terceros</h2>
@@ -55,7 +55,7 @@ export default function TerminosPage() {
 
             <h2 className="text-2xl font-semibold text-white mt-8">8. Legislación aplicable</h2>
             <p>
-              Estos Términos y Condiciones se rigen por las leyes de la República de Chile. Para cualquier controversia derivada de su interpretación o aplicación, las partes se someten a la jurisdicción de los tribunales ordinarios de justicia de Santiago.
+              Estos Términos se interpretan conforme a la normativa aplicable en Chile. Los derechos y vías para resolver controversias son los que establezca dicha normativa y los acuerdos válidamente celebrados.
             </p>
 
             <h2 className="text-2xl font-semibold text-white mt-8">9. Contacto</h2>
