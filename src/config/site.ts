@@ -91,6 +91,7 @@ export const features = {
 export const navLinks = [
   { title: "Inicio", href: "/#inicio" },
   { title: "Servicios", href: "/#servicios" },
+  { title: "Centro digital", href: "/experiencia" },
   ...(features.enablePricing ? [{ title: "Planes", href: "/#planes" }] : []),
   { title: "Seguimiento", href: "/seguimiento" },
   { title: "Contacto", href: "/#contacto" },
