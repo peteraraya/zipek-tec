@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import type { Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -94,7 +95,11 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="es" className={`${inter.variable} ${manrope.variable}`}>
+    <html
+      lang="es"
+      suppressHydrationWarning
+      className={`${inter.variable} ${manrope.variable}`}
+    >
       <head>
         <script
           type="application/ld+json"
@@ -102,9 +107,29 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider defaultTheme="dark">
           {children}
         </ThemeProvider>
+        <Script
+          id="theme-initialization"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+              const storageKey = "theme";
+              let theme = "dark";
+              try {
+                const savedTheme = localStorage.getItem(storageKey);
+                if (savedTheme === "light" || savedTheme === "dark") theme = savedTheme;
+              } catch (error) {
+                console.error("Failed to load theme preference from localStorage", error);
+              }
+              const root = document.documentElement;
+              root.classList.remove("dark", "light");
+              root.classList.add(theme);
+              root.style.colorScheme = theme;
+            })();`,
+          }}
+        />
       </body>
     </html>
   );
