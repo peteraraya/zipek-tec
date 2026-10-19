@@ -11,8 +11,6 @@ type AdminSettings = {
   workday_end: string;
   timezone: string;
   retention_clients_days: number | null;
-  retention_inquiries_days: number | null;
-  retention_documents_days: number | null;
   retention_orders_days: number | null;
   alert_email: string | null;
   daily_alerts_enabled: boolean;
@@ -33,6 +31,13 @@ const categoryLabels: Record<string, string> = {
   inquiries: "Consultas",
   documents: "Documentos",
   orders: "Órdenes",
+  audit_events: "Eventos de auditoría",
+};
+
+const retentionPeriods: Record<string, string> = {
+  inquiries: "90 días desde cierre o resolución",
+  documents: "5 años desde el envío/finalización",
+  audit_events: "5 años desde la creación del evento",
 };
 
 export default async function AdminSettingsPage({
@@ -62,7 +67,7 @@ export default async function AdminSettingsPage({
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-light">Control del sistema</p>
         <h1 className="mt-2 text-3xl font-bold text-white">Configuración y retención</h1>
         <p className="mt-2 max-w-3xl text-gray-400">
-          Los SLA se calculan dentro del horario laboral configurado, de lunes a viernes. El informe de retención nunca elimina datos.
+          Los SLA se calculan dentro del horario laboral configurado, de lunes a viernes. La retención aprobada se ejecuta diariamente en lotes protegidos y queda registrada en auditoría.
         </p>
       </header>
 
@@ -102,20 +107,19 @@ export default async function AdminSettingsPage({
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-white">Retención informativa</h2>
-            <p className="mt-1 text-sm text-gray-400">Deja vacío hasta aprobar un plazo. Los candidatos solo se informan; no existe borrado automático.</p>
+            <h2 className="text-lg font-semibold text-white">Plazos aprobados</h2>
+            <p className="mt-1 text-sm text-gray-400">Las consultas cerradas se anonimizan después de 90 días; los documentos enviados y los eventos de auditoría vencen a los 5 años. Los plazos aprobados son fijos.</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {([
                 ["retention_clients_days", "Conservar clientes archivados (días)", config.retention_clients_days],
-                ["retention_inquiries_days", "Conservar consultas (días)", config.retention_inquiries_days],
-                ["retention_documents_days", "Conservar documentos (días)", config.retention_documents_days],
-                ["retention_orders_days", "Conservar órdenes (días)", config.retention_orders_days],
+                ["retention_orders_days", "Conservar órdenes cerradas (días)", config.retention_orders_days],
               ] as const).map(([name, label, value]) => (
                 <label key={name} className="text-sm text-gray-300">{label}
                   <input name={name} type="number" min="30" max="3650" defaultValue={value ?? ""} placeholder="Pendiente de aprobación" className="mt-2 w-full rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-white" />
                 </label>
               ))}
             </div>
+            <p className="mt-3 text-xs text-gray-500">Los plazos para clientes archivados y órdenes cerradas siguen siendo informativos y configurables; no se borran automáticamente.</p>
           </section>
 
           <section>
@@ -156,14 +160,14 @@ export default async function AdminSettingsPage({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="text-xs uppercase text-gray-500"><tr>
-              <th className="px-6 py-3">Módulo</th><th className="px-6 py-3">Plazo</th><th className="px-6 py-3">Candidatos</th><th className="px-6 py-3">Más antiguo</th><th className="px-6 py-3">Borrado automático</th>
+              <th className="px-6 py-3">Módulo</th><th className="px-6 py-3">Plazo</th><th className="px-6 py-3">Candidatos</th><th className="px-6 py-3">Más antiguo</th><th className="px-6 py-3">Acción automática</th>
             </tr></thead>
             <tbody className="divide-y divide-white/5">
               {((retention ?? []) as RetentionEntry[]).map((entry) => (
                 <tr key={entry.category} className="text-gray-300">
                   <td className="px-6 py-4">{categoryLabels[entry.category] ?? entry.category}</td>
-                  <td className="px-6 py-4">{entry.retention_days ? `${entry.retention_days} días` : "Pendiente"}</td>
-                  <td className="px-6 py-4">{entry.retention_days ? entry.candidate_count : "—"}</td>
+                  <td className="px-6 py-4">{retentionPeriods[entry.category] ?? (entry.retention_days ? `${entry.retention_days} días` : "Pendiente")}</td>
+                  <td className="px-6 py-4">{entry.retention_days !== null ? entry.candidate_count : "—"}</td>
                   <td className="px-6 py-4">{entry.oldest_candidate ? new Date(entry.oldest_candidate).toLocaleDateString("es-CL") : "—"}</td>
                   <td className="px-6 py-4">{entry.automatic_deletion ? "Sí" : "No"}</td>
                 </tr>

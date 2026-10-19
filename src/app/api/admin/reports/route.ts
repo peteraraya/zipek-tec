@@ -20,13 +20,16 @@ export async function GET() {
 
   const values = metrics as Record<string, unknown>;
   const rows = [
-    ["tipo", "indicador", "valor", "plazo_dias", "candidatos", "mas_antiguo"],
+    ["tipo", "indicador", "valor", "plazo", "candidatos", "mas_antiguo"],
     ...Object.entries(values).map(([key, value]) => ["operacion", key, value == null ? "" : String(value), "", "", ""]),
     ...((retention ?? []) as Array<Record<string, unknown>>).map((entry) => [
       "retencion",
       String(entry.category),
       "",
-      entry.retention_days === null ? "" : String(entry.retention_days),
+      entry.category === "inquiries" ? "90 días desde cierre/resolución"
+        : entry.category === "documents" ? "5 años desde envío/finalización"
+          : entry.category === "audit_events" ? "5 años desde creación del evento"
+            : entry.retention_days === null ? "" : `${entry.retention_days} días`,
       String(entry.candidate_count),
       entry.oldest_candidate ? String(entry.oldest_candidate) : "",
     ]),
